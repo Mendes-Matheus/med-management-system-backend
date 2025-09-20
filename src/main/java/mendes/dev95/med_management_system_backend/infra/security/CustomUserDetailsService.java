@@ -1,8 +1,8 @@
 package mendes.dev95.med_management_system_backend.infra.security;
 
 import lombok.RequiredArgsConstructor;
-import mendes.dev95.med_management_system_backend.usuario.entity.Usuario;
-import mendes.dev95.med_management_system_backend.usuario.repository.UsuarioRepository;
+import mendes.dev95.med_management_system_backend.domain.usuario.entity.Usuario;
+import mendes.dev95.med_management_system_backend.domain.usuario.repository.UsuarioRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
