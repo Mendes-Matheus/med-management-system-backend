@@ -34,13 +34,13 @@ public class AuthService {
         Usuario usuario = repository.findByEmail(request.email())
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.UNAUTHORIZED,
-                        getMessage("user.invalidemailorpassword"))
+                        getMessage("usuario.invalidemailorpassword"))
                 );
 
         if (!passwordEncoder.matches(request.password(), usuario.getPassword())) {
             throw new ResponseStatusException(
                     HttpStatus.UNAUTHORIZED,
-                    getMessage("user.invalidemailorpassword")
+                    getMessage("usuario.invalidemailorpassword")
             );
         }
 
@@ -54,8 +54,8 @@ public class AuthService {
 
         if (user.isPresent()) {
             throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    getMessage("user.email.alreadyexists")
+                    HttpStatus.CONFLICT,
+                    getMessage("usuario.email.alreadyexists")
             );
         }
 
@@ -73,7 +73,7 @@ public class AuthService {
         Usuario usuario = repository.findByEmail(email)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND,
-                        getMessage("user.notfound"))
+                        getMessage("usuario.notfound"))
                 );
 
         String token = tokenService.generateToken(usuario);

@@ -41,10 +41,10 @@ public record PacienteRequestDTO(
         @NotNull(message = "{paciente.celular.notnull}")
         @Size(min = 10, max = 11, message = "{paciente.celular.size}")
         @NotBlank(message = "{paciente.celular.notblank}")
-        String celular1,
+        String telefone,
 
         @Size(min = 10, max = 11, message = "{paciente.celular.size}")
-        String celular2,
+        String telefoneSecundario,
 
         @Size(max = 100, message = "{paciente.sexo.size}")
         @NotBlank(message = "{paciente.sexo.notblank}")
