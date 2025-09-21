@@ -41,7 +41,9 @@ public class ProcedimentoService {
                 .id(procedimento.getId())
                 .estabelecimento(estabelecimento)
                 .nomeProcedimento(procedimento.getNomeProcedimento())
+                .tipoProcedimento(procedimento.getTipoProcedimento())
                 .observacoes(procedimento.getObservacoes())
+                .orientacoes(procedimento.getOrientacoes())
                 .build();
 
         return repository.save(procedimentoToSave);

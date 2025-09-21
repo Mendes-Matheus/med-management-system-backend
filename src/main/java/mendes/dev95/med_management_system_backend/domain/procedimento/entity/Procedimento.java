@@ -32,10 +32,10 @@ public class Procedimento implements Serializable {
     @Version
     private Long version;
 
-    @Column(name = "nome_procedimento", length = 50, nullable = false)
+    @Column(name = "nome_procedimento", length = 100, nullable = false)
     private String nomeProcedimento;
 
-    @Column(name = "tipo_procedimento", nullable = false)
+    @Column(name = "tipo_procedimento", length = 100, nullable = false)
     @Enumerated(EnumType.STRING)
     private TipoProcedimento tipoProcedimento;
 

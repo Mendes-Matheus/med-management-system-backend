@@ -21,7 +21,9 @@ public interface ProcedimentoMapper {
         return Procedimento.builder()
                 .nomeProcedimento(dto.nomeProcedimento())
                 .observacoes(dto.observacoes())
-                .estabelecimento(estabelecimento) // agora não é null
+                .orientacoes(dto.orientacoes())
+                .estabelecimento(estabelecimento)
+                .tipoProcedimento(dto.tipoProcedimento())
                 .build();
     }
 
