@@ -15,5 +15,6 @@ public interface PacienteRepository extends JpaRepository<Paciente, UUID> {
     boolean existsByCpf(String cpf);
     boolean existsByRg(String rg);
     boolean existsByCns(String cns);
+    boolean existsByEmail(String email);
     Optional<Paciente> findByNome(String nome);
 }
