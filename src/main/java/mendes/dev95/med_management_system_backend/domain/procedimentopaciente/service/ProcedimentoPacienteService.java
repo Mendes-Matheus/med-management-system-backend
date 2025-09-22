@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import mendes.dev95.med_management_system_backend.domain.paciente.repository.PacienteRepository;
 import mendes.dev95.med_management_system_backend.domain.procedimento.repository.ProcedimentoRepository;
 import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPacienteRequestDTO;
+import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPacienteResponseDTO;
 import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.entity.ProcedimentoPaciente;
 import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.entity.StatusProcedimento;
 import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.mapper.ProcedimentoPacienteMapper;
@@ -23,20 +24,27 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class ProcedimentoPacienteService {
+
     private final ProcedimentoPacienteRepository repository;
     private final ProcedimentoRepository procedimentoRepository;
     private final PacienteRepository pacienteRepository;
     private final MessageSource messageSource;
     private final ProcedimentoPacienteMapper mapper;
 
-    public ProcedimentoPaciente save(ProcedimentoPaciente procedimentoPaciente) {
+    public ProcedimentoPacienteResponseDTO save(ProcedimentoPacienteRequestDTO dto) {
+        var entity = mapper.toEntity(dto);
 
-        var paciente = pacienteRepository.findById(procedimentoPaciente.getPaciente().getId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, getMessage("paciente.notfound")));
+        var paciente = pacienteRepository.findById(entity.getPaciente().getId())
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        getMessage("paciente.notfound")
+                ));
 
-        var procedimento = procedimentoRepository.findById(procedimentoPaciente.getProcedimento().getId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, getMessage("procedimento.notfound")));
-
+        var procedimento = procedimentoRepository.findById(entity.getProcedimento().getId())
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        getMessage("procedimento.notfound")
+                ));
 
         var verificarStatus = List.of(
                 StatusProcedimento.PENDENTE,
@@ -60,56 +68,71 @@ public class ProcedimentoPacienteService {
         }
 
         var procedimentoPacienteToSave = ProcedimentoPaciente.builder()
-               .status(procedimentoPaciente.getStatus())
-               .dataSolicitacao(procedimentoPaciente.getDataSolicitacao())
-               .dataAgendamento(procedimentoPaciente.getDataAgendamento())
-                .observacoes(procedimentoPaciente.getObservacoes())
-               .paciente(paciente)
-               .procedimento(procedimento)
-               .build();
+                .status(entity.getStatus())
+                .dataSolicitacao(entity.getDataSolicitacao())
+                .dataAgendamento(entity.getDataAgendamento())
+                .observacoes(entity.getObservacoes())
+                .paciente(paciente)
+                .procedimento(procedimento)
+                .build();
 
-        return repository.save(procedimentoPacienteToSave);
+        var saved = repository.save(procedimentoPacienteToSave);
+        return mapper.toResponse(saved);
     }
 
-    public List<ProcedimentoPaciente> findAll() {
-        return repository.findAll();
+    public List<ProcedimentoPacienteResponseDTO> findAll() {
+        return mapper.toResponseList(repository.findAll());
     }
 
-    public ProcedimentoPaciente findById(UUID id) {
-        return repository.findById(id)
+    public ProcedimentoPacienteResponseDTO findById(UUID id) {
+        var entity = repository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, getMessage("procedimento.notfound")
+                        HttpStatus.NOT_FOUND,
+                        getMessage("procedimento.notfound")
                 ));
+        return mapper.toResponse(entity);
     }
 
-    public ProcedimentoPaciente findByPacienteId(UUID pacienteId) {
-        return repository.findByPacienteId(pacienteId);
+    public ProcedimentoPacienteResponseDTO findByPacienteId(UUID pacienteId) {
+        var entity = repository.findByPacienteId(pacienteId);
+        return mapper.toResponse(entity);
     }
 
-    public ProcedimentoPaciente findByProcedimentoId(UUID procedimentoId) {
-        return repository.findByProcedimentoId(procedimentoId);
+    public ProcedimentoPacienteResponseDTO findByProcedimentoId(UUID procedimentoId) {
+        var entity = repository.findByProcedimentoId(procedimentoId);
+        return mapper.toResponse(entity);
     }
 
-    public ProcedimentoPaciente update(UUID id, ProcedimentoPacienteRequestDTO dto) {
-        ProcedimentoPaciente procedimentoPaciente = findById(id);
+    public ProcedimentoPacienteResponseDTO update(UUID id, ProcedimentoPacienteRequestDTO dto) {
+        var procedimentoPaciente = repository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        getMessage("procedimento.notfound")
+                ));
 
         mapper.updateEntityFromDto(dto, procedimentoPaciente);
 
         if (dto.pacienteId() != null) {
             var paciente = pacienteRepository.findById(dto.pacienteId())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, getMessage("paciente.notfound")));
+                    .orElseThrow(() -> new ResponseStatusException(
+                            HttpStatus.NOT_FOUND,
+                            getMessage("paciente.notfound")
+                    ));
             procedimentoPaciente.setPaciente(paciente);
         }
 
         if (dto.procedimentoId() != null) {
             var procedimento = procedimentoRepository.findById(dto.procedimentoId())
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, getMessage("procedimento.notfound")));
+                    .orElseThrow(() -> new ResponseStatusException(
+                            HttpStatus.NOT_FOUND,
+                            getMessage("procedimento.notfound")
+                    ));
             procedimentoPaciente.setProcedimento(procedimento);
         }
 
-        return repository.save(procedimentoPaciente);
+        var updated = repository.save(procedimentoPaciente);
+        return mapper.toResponse(updated);
     }
-
 
     public void delete(UUID id) {
         if (!repository.existsById(id)) {
@@ -119,8 +142,8 @@ public class ProcedimentoPacienteService {
     }
 
     private String getMessage(@NonNull String code, @NonNull Object... args) {
-        Locale locale = LocaleContextHolder.getLocale(); // detecta locale do request
+        Locale locale = LocaleContextHolder.getLocale();
         return messageSource.getMessage(code, args, locale);
     }
-
 }
+

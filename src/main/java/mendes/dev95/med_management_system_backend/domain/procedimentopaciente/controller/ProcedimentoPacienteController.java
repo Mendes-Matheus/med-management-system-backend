@@ -4,7 +4,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPacienteRequestDTO;
 import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPacienteResponseDTO;
-import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.mapper.ProcedimentoPacienteMapper;
 import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.service.ProcedimentoPacienteService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,17 +19,14 @@ import java.util.UUID;
 public class ProcedimentoPacienteController {
 
     private final ProcedimentoPacienteService service;
-    private final ProcedimentoPacienteMapper mapper;
 
     @PostMapping
     public ResponseEntity<ProcedimentoPacienteResponseDTO> save(@RequestBody @Valid ProcedimentoPacienteRequestDTO request) {
-        var entity = mapper.toEntity(request);
-        var created = service.save(entity);
-        var response = mapper.toResponse(created);
+        var response = service.save(request);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(created.getId())
+                .buildAndExpand(response.id())
                 .toUri();
 
         return ResponseEntity.created(location).body(response);
@@ -38,37 +34,30 @@ public class ProcedimentoPacienteController {
 
     @GetMapping
     public ResponseEntity<List<ProcedimentoPacienteResponseDTO>> findAll() {
-        var find = service.findAll();
-        var response = mapper.toResponseList(find);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(service.findAll());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ProcedimentoPacienteResponseDTO> findById(@PathVariable UUID id) {
-        var find = service.findById(id);
-        var response = mapper.toResponse(find);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(service.findById(id));
     }
 
     @GetMapping("/paciente/{id}")
     public ResponseEntity<ProcedimentoPacienteResponseDTO> findByPacienteId(@PathVariable UUID id) {
-        var find = service.findByPacienteId(id);
-        var response = mapper.toResponse(find);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(service.findByPacienteId(id));
     }
 
     @GetMapping("/procedimento/{id}")
     public ResponseEntity<ProcedimentoPacienteResponseDTO> findByProcedimentoId(@PathVariable UUID id) {
-        var find = service.findByProcedimentoId(id);
-        var response = mapper.toResponse(find);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(service.findByProcedimentoId(id));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProcedimentoPacienteResponseDTO> update(@PathVariable UUID id, @RequestBody @Valid ProcedimentoPacienteRequestDTO request) {
-        var updated = service.update(id, request);
-        var response = mapper.toResponse(updated);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<ProcedimentoPacienteResponseDTO> update(
+            @PathVariable UUID id,
+            @RequestBody @Valid ProcedimentoPacienteRequestDTO request
+    ) {
+        return ResponseEntity.ok(service.update(id, request));
     }
 
     @DeleteMapping("/{id}")
