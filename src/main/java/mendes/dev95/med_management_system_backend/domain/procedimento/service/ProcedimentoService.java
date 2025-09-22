@@ -7,6 +7,7 @@ import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import mendes.dev95.med_management_system_backend.domain.estabelecimento.repository.EstabelecimentoRepository;
 import mendes.dev95.med_management_system_backend.domain.procedimento.dto.ProcedimentoRequestDTO;
+import mendes.dev95.med_management_system_backend.domain.procedimento.dto.ProcedimentoResponseDTO;
 import mendes.dev95.med_management_system_backend.domain.procedimento.entity.Procedimento;
 import mendes.dev95.med_management_system_backend.domain.procedimento.mapper.ProcedimentoMapper;
 import mendes.dev95.med_management_system_backend.domain.procedimento.repository.ProcedimentoRepository;
@@ -25,43 +26,50 @@ import java.util.UUID;
 @Log4j2
 @RequiredArgsConstructor
 public class ProcedimentoService {
+
     private final ProcedimentoRepository repository;
     private final MessageSource messageSource;
     private final EstabelecimentoRepository estabelecimentoRepository;
     private final ProcedimentoMapper mapper;
 
+    public ProcedimentoResponseDTO save(ProcedimentoRequestDTO dto) {
+        var entity = mapper.toEntity(dto);
 
-    public Procedimento save(Procedimento procedimento) {
-        var estabelecimento = estabelecimentoRepository.findById(procedimento.getEstabelecimento().getId())
+        var estabelecimento = estabelecimentoRepository.findById(entity.getEstabelecimento().getId())
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, getMessage("estabelecimento.notfound")
                 ));
 
         var procedimentoToSave = Procedimento.builder()
-                .id(procedimento.getId())
+                .id(entity.getId())
                 .estabelecimento(estabelecimento)
-                .nomeProcedimento(procedimento.getNomeProcedimento())
-                .tipoProcedimento(procedimento.getTipoProcedimento())
-                .observacoes(procedimento.getObservacoes())
-                .orientacoes(procedimento.getOrientacoes())
+                .nomeProcedimento(entity.getNomeProcedimento())
+                .tipoProcedimento(entity.getTipoProcedimento())
+                .observacoes(entity.getObservacoes())
+                .orientacoes(entity.getOrientacoes())
                 .build();
 
-        return repository.save(procedimentoToSave);
+        var saved = repository.save(procedimentoToSave);
+        return mapper.toResponse(saved);
     }
 
-    public List<Procedimento> findAll() {
-        return repository.findAll();
+    public List<ProcedimentoResponseDTO> findAll() {
+        return mapper.toResponseList(repository.findAll());
     }
 
-    public Procedimento findById(UUID id) {
-        return repository.findById(id)
+    public ProcedimentoResponseDTO findById(UUID id) {
+        var entity = repository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, getMessage("procedimento.notfound")
                 ));
+        return mapper.toResponse(entity);
     }
 
-    public Procedimento update(UUID id, ProcedimentoRequestDTO dto) {
-        Procedimento procedimento = findById(id);
+    public ProcedimentoResponseDTO update(UUID id, ProcedimentoRequestDTO dto) {
+        var procedimento = repository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, getMessage("procedimento.notfound")
+                ));
 
         mapper.updateEntityFromDto(dto, procedimento);
 
@@ -73,7 +81,8 @@ public class ProcedimentoService {
             procedimento.setEstabelecimento(estabelecimento);
         }
 
-        return repository.save(procedimento);
+        var updated = repository.save(procedimento);
+        return mapper.toResponse(updated);
     }
 
     public void delete(UUID id) {
@@ -83,12 +92,9 @@ public class ProcedimentoService {
         repository.deleteById(id);
     }
 
-    /**
-     * Metodo auxiliar para buscar mensagens internacionalizadas
-     */
     private String getMessage(@NonNull String code, @NonNull Object... args) {
-        Locale locale = LocaleContextHolder.getLocale(); // detecta locale do request
+        Locale locale = LocaleContextHolder.getLocale();
         return messageSource.getMessage(code, args, locale);
     }
-
 }
+
