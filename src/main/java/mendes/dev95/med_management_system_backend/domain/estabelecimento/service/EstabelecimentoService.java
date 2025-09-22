@@ -2,7 +2,7 @@ package mendes.dev95.med_management_system_backend.domain.estabelecimento.servic
 
 import lombok.RequiredArgsConstructor;
 import mendes.dev95.med_management_system_backend.domain.estabelecimento.dto.EstabelecimentoRequestDTO;
-import mendes.dev95.med_management_system_backend.domain.estabelecimento.entity.Estabelecimento;
+import mendes.dev95.med_management_system_backend.domain.estabelecimento.dto.EstabelecimentoResponseDTO;
 import mendes.dev95.med_management_system_backend.domain.estabelecimento.mapper.EstabelecimentoMapper;
 import mendes.dev95.med_management_system_backend.domain.estabelecimento.repository.EstabelecimentoRepository;
 import org.springframework.context.MessageSource;
@@ -24,39 +24,46 @@ public class EstabelecimentoService {
     private final MessageSource messageSource;
     private final EstabelecimentoMapper mapper;
 
-    public Estabelecimento save(Estabelecimento estabelecimento) {
-        return repository.save(estabelecimento);
+    public EstabelecimentoResponseDTO save(EstabelecimentoRequestDTO dto) {
+        var entity = mapper.toEntity(dto);
+        var saved = repository.save(entity);
+        return mapper.toResponse(saved);
     }
 
-    public List<Estabelecimento> findAll() {
-        return repository.findAll();
+    public List<EstabelecimentoResponseDTO> findAll() {
+        return mapper.toResponseList(repository.findAll());
     }
 
-    public Estabelecimento findById(UUID id) {
-        return repository.findById(id)
+    public EstabelecimentoResponseDTO findById(UUID id) {
+        var entity = repository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, getMessage("estabelecimento.notfound")
                 ));
+        return mapper.toResponse(entity);
     }
 
-    public Estabelecimento update(UUID id, EstabelecimentoRequestDTO dto) {
-        Estabelecimento estabelecimento = findById(id);
+    public EstabelecimentoResponseDTO update(UUID id, EstabelecimentoRequestDTO dto) {
+        var entity = repository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, getMessage("estabelecimento.notfound")
+                ));
 
-        mapper.updateEntityFromDto(dto, estabelecimento);
+        mapper.updateEntityFromDto(dto, entity);
 
-        return repository.save(estabelecimento);
+        var updated = repository.save(entity);
+        return mapper.toResponse(updated);
     }
 
     public void delete(UUID id) {
         if (!repository.existsById(id)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, getMessage("estabelecimento.delete.notfound"));
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    getMessage("estabelecimento.delete.notfound")
+            );
         }
         repository.deleteById(id);
     }
 
-    /**
-     * Metodo auxiliar para buscar mensagens internacionalizadas
-     */
     private String getMessage(String code, Object... args) {
         Locale locale = LocaleContextHolder.getLocale();
         return messageSource.getMessage(code, args, locale);

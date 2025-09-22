@@ -5,7 +5,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import mendes.dev95.med_management_system_backend.domain.estabelecimento.dto.EstabelecimentoRequestDTO;
 import mendes.dev95.med_management_system_backend.domain.estabelecimento.dto.EstabelecimentoResponseDTO;
-import mendes.dev95.med_management_system_backend.domain.estabelecimento.mapper.EstabelecimentoMapper;
 import mendes.dev95.med_management_system_backend.domain.estabelecimento.service.EstabelecimentoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,17 +20,14 @@ import java.util.UUID;
 public class EstabelecimentoController {
 
     private final EstabelecimentoService service;
-    private final EstabelecimentoMapper mapper;
 
     @PostMapping
     public ResponseEntity<EstabelecimentoResponseDTO> save(@RequestBody @Valid EstabelecimentoRequestDTO request) {
-        var entity = mapper.toEntity(request);
-        var created = service.save(entity);
-        var response = mapper.toResponse(created);
+        var response = service.save(request);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(created.getId())
+                .buildAndExpand(response.id())
                 .toUri();
 
         return ResponseEntity.created(location).body(response);
@@ -39,22 +35,20 @@ public class EstabelecimentoController {
 
     @GetMapping
     public ResponseEntity<List<EstabelecimentoResponseDTO>> findAll() {
-        var find = service.findAll();
-        var response = mapper.toResponseList(find);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(service.findAll());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<EstabelecimentoResponseDTO> findById(@PathVariable UUID id) {
-        var find = service.findById(id);
-        return ResponseEntity.ok(mapper.toResponse(find));
+        return ResponseEntity.ok(service.findById(id));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<EstabelecimentoResponseDTO> update(@PathVariable UUID id, @RequestBody @Valid EstabelecimentoRequestDTO request) {
-        var updated = service.update(id, request);
-        var response = mapper.toResponse(updated);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<EstabelecimentoResponseDTO> update(
+            @PathVariable UUID id,
+            @RequestBody @Valid EstabelecimentoRequestDTO request
+    ) {
+        return ResponseEntity.ok(service.update(id, request));
     }
 
     @DeleteMapping("/{id}")
@@ -62,5 +56,5 @@ public class EstabelecimentoController {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
-
 }
+
