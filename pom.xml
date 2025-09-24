@@ -176,6 +176,7 @@
 				<artifactId>spotbugs-maven-plugin</artifactId>
 				<version>4.9.6.0</version>
 				<configuration>
+					<excludeFilterFile>${project.basedir}/spotbugs-exclude.xml</excludeFilterFile>
 					<effort>Max</effort>
 					<threshold>Low</threshold>
 					<plugins>

@@ -34,3 +34,4 @@ build/
 
 ### Enviromment Variables ###
 .env
+/src/main/resources/application-analysis.yml
