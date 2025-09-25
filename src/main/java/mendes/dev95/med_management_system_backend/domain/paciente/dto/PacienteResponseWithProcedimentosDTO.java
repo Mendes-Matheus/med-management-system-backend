@@ -19,4 +19,8 @@ public record PacienteResponseWithProcedimentosDTO(
         String bairro,
         String observacoes,
         List<ProcedimentoPacienteSimpleResponseDTO> procedimentos
-) {}
+) {
+    public PacienteResponseWithProcedimentosDTO {
+        procedimentos = procedimentos == null ? List.of() : List.copyOf(procedimentos);
+    }
+}
