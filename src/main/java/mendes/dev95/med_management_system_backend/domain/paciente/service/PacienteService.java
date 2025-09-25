@@ -5,13 +5,13 @@ import mendes.dev95.med_management_system_backend.domain.paciente.dto.PacienteRe
 import mendes.dev95.med_management_system_backend.domain.paciente.dto.PacienteResponseDTO;
 import mendes.dev95.med_management_system_backend.domain.paciente.dto.PacienteResponseWithProcedimentosDTO;
 import mendes.dev95.med_management_system_backend.domain.paciente.entity.Paciente;
+import mendes.dev95.med_management_system_backend.domain.paciente.exception.PacienteAlreadyExistsException;
+import mendes.dev95.med_management_system_backend.domain.paciente.exception.PacienteNotFoundException;
 import mendes.dev95.med_management_system_backend.domain.paciente.mapper.PacienteMapper;
 import mendes.dev95.med_management_system_backend.domain.paciente.repository.PacienteRepository;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Locale;
@@ -34,18 +34,14 @@ public class PacienteService {
     }
 
     private void validatePatient(Paciente paciente) {
-        if (repository.existsByCpf(paciente.getCpf())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, getMessage("paciente.cpf.exist"));
-        }
-        if (repository.existsByRg(paciente.getRg())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, getMessage("paciente.rg.exist"));
-        }
-        if (repository.existsByCns(paciente.getCns())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, getMessage("paciente.cns.exist"));
-        }
-        if (repository.existsByEmail(paciente.getEmail())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, getMessage("paciente.email.exist"));
-        }
+        if (
+            repository.existsByCpf(paciente.getCpf()) ||
+            repository.existsByRg(paciente.getRg()) ||
+            repository.existsByCns(paciente.getCns()) ||
+            repository.existsByEmail(paciente.getEmail())
+        ) {
+        throw new PacienteAlreadyExistsException();
+            }
     }
 
     public List<PacienteResponseDTO> findAll() {
@@ -54,36 +50,31 @@ public class PacienteService {
 
     public PacienteResponseDTO findById(UUID id) {
         var entity = repository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, getMessage("paciente.notfound")));
+                .orElseThrow(() -> new PacienteNotFoundException(id));
         return mapper.toResponse(entity);
     }
 
     public PacienteResponseDTO findByCpf(String cpf) {
         var entity = repository.findByCpf(cpf)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, getMessage("paciente.notfound")));
+                .orElseThrow(() -> new PacienteNotFoundException(cpf));
         return mapper.toResponse(entity);
     }
 
     public PacienteResponseDTO findByNome(String nome) {
         var entity = repository.findByNome(nome)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, getMessage("paciente.notfound")));
+                .orElseThrow(() -> new PacienteNotFoundException(nome));
         return mapper.toResponse(entity);
     }
 
     public PacienteResponseWithProcedimentosDTO findProcedimentosPaciente(UUID id) {
         var entity = repository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, getMessage("paciente.notfound")));
+                .orElseThrow(() -> new PacienteNotFoundException(id));
         return mapper.toDetailResponse(entity);
     }
 
     public PacienteResponseDTO update(UUID id, PacienteRequestDTO dto) {
         var paciente = repository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, getMessage("paciente.notfound")));
+                .orElseThrow(() -> new PacienteNotFoundException(id));
 
         mapper.entityFromDto(dto, paciente);
 
@@ -93,8 +84,7 @@ public class PacienteService {
 
     public void delete(UUID id) {
         if (!repository.existsById(id)) {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, getMessage("paciente.delete.notfound"));
+            throw new PacienteNotFoundException(id);
         }
         repository.deleteById(id);
     }

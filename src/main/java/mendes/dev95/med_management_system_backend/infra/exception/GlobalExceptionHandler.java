@@ -5,6 +5,9 @@ import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import mendes.dev95.med_management_system_backend.domain.estabelecimento.exception.EstabelecimentoIntegrityViolationException;
 import mendes.dev95.med_management_system_backend.domain.estabelecimento.exception.EstabelecimentoNotFoundException;
+import mendes.dev95.med_management_system_backend.domain.paciente.exception.PacienteAlreadyExistsException;
+import mendes.dev95.med_management_system_backend.domain.paciente.exception.PacienteIntegrityViolationException;
+import mendes.dev95.med_management_system_backend.domain.paciente.exception.PacienteNotFoundException;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -243,6 +246,26 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 
+    @ExceptionHandler(PacienteAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handlePacienteAlreadyExists(
+            PacienteAlreadyExistsException ex, HttpServletRequest request
+    ){
+        String correlationId = generateCorrelationId();
+        log.warn("\n\n{}\nCorrelation ID: {}\n", ex.getMessage(), correlationId);
+
+        String message = getLocalizedMessage("paciente.alreadyexists", "Paciente já cadastrado");
+
+        ErrorResponse response = buildErrorResponse(
+                HttpStatus.CONFLICT,
+                getLocalizedMessage("error.conflict", "Conflict"),
+                List.of(message),
+                request,
+                correlationId
+        );
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
     @ExceptionHandler(EstabelecimentoIntegrityViolationException.class)
     public ResponseEntity<ErrorResponse> handleEstabelecimentoIntegrityViolation(
             EstabelecimentoIntegrityViolationException ex, HttpServletRequest request) {
@@ -263,6 +286,48 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
+
+    @ExceptionHandler(PacienteNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handlePacienteNotFound(
+            PacienteNotFoundException ex, HttpServletRequest request) {
+
+        String correlationId = generateCorrelationId();
+        log.warn("\n\n{}\nCorrelation ID: {}\n", ex.getMessage(), correlationId);
+
+        String message = getLocalizedMessage("paciente.notfound", "Paciente não encontrado");
+
+        ErrorResponse response = buildErrorResponse(
+                HttpStatus.NOT_FOUND,
+                getLocalizedMessage("error.not.found", "Not Found"),
+                List.of(message),
+                request,
+                correlationId
+        );
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    @ExceptionHandler(PacienteIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponse> handlePacienteIntegrityViolation(
+            PacienteIntegrityViolationException ex, HttpServletRequest request) {
+
+        String correlationId = generateCorrelationId();
+        log.error("Paciente integrity violation [{}]: {}", correlationId, ex.getMessage(), ex);
+
+        String message = getLocalizedMessage("paciente.delete.integrity.violation",
+                "Não é possível excluir o paciente devido a restrições de integridade");
+
+        ErrorResponse response = buildErrorResponse(
+                HttpStatus.CONFLICT,
+                getLocalizedMessage("error.conflict", "Conflict"),
+                List.of(message),
+                request,
+                correlationId
+        );
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
 
     private String getLocalizedMessage(String code, String defaultMessage) {
         try {
