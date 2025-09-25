@@ -45,6 +45,8 @@ public class Procedimento implements Serializable {
 
     @OneToMany(mappedBy = "procedimento", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
     private List<ProcedimentoPaciente> procedimentoPaciente = new ArrayList<>();
 
     @Column(length = 1000)
