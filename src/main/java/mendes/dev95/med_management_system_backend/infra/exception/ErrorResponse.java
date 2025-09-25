@@ -8,5 +8,6 @@ public record ErrorResponse(
         String error,
         List<String> messages,
         LocalDateTime timestamp,
-        String path
+        String path,
+        String correlationId  // Para rastreamento de logs
 ) {}
