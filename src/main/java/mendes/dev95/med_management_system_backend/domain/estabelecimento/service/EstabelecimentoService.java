@@ -1,72 +1,96 @@
 package mendes.dev95.med_management_system_backend.domain.estabelecimento.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import mendes.dev95.med_management_system_backend.domain.estabelecimento.dto.EstabelecimentoRequestDTO;
 import mendes.dev95.med_management_system_backend.domain.estabelecimento.dto.EstabelecimentoResponseDTO;
+import mendes.dev95.med_management_system_backend.domain.estabelecimento.exception.EstabelecimentoIntegrityViolationException;
+import mendes.dev95.med_management_system_backend.domain.estabelecimento.exception.EstabelecimentoNotFoundException;
 import mendes.dev95.med_management_system_backend.domain.estabelecimento.mapper.EstabelecimentoMapper;
 import mendes.dev95.med_management_system_backend.domain.estabelecimento.repository.EstabelecimentoRepository;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.http.HttpStatus;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.UUID;
 
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class EstabelecimentoService {
 
+    @SuppressWarnings("EI_EXPOSE_REP2")
     private final EstabelecimentoRepository repository;
-    private final MessageSource messageSource;
+
+    @SuppressWarnings("EI_EXPOSE_REP2")
     private final EstabelecimentoMapper mapper;
 
+    @Transactional
     public EstabelecimentoResponseDTO save(EstabelecimentoRequestDTO dto) {
+        log.info("Saving new estabelecimento");
+
         var entity = mapper.toEntity(dto);
         var saved = repository.save(entity);
-        return mapper.toResponse(saved);
+        var response = mapper.toResponse(saved);
+
+        log.info("Estabelecimento saved successfully with ID: {}", response.id());
+        return response;
     }
 
+    @Transactional(readOnly = true)
     public List<EstabelecimentoResponseDTO> findAll() {
-        return mapper.toResponseList(repository.findAll());
+        log.info("Retrieving all estabelecimentos");
+
+        var entities = repository.findAll();
+        var responses = mapper.toResponseList(entities);
+
+        log.info("Retrieved {} estabelecimentos", responses.size());
+        return responses;
     }
 
+    @Transactional(readOnly = true)
     public EstabelecimentoResponseDTO findById(UUID id) {
+        log.info("Searching for estabelecimento with ID: {}", id);
+
         var entity = repository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, getMessage("estabelecimento.notfound")
-                ));
-        return mapper.toResponse(entity);
+                .orElseThrow(() -> new EstabelecimentoNotFoundException(id));
+
+        var response = mapper.toResponse(entity);
+        log.info("Estabelecimento found with ID: {}", id);
+        return response;
     }
 
+    @Transactional
     public EstabelecimentoResponseDTO update(UUID id, EstabelecimentoRequestDTO dto) {
+        log.info("Updating estabelecimento with ID: {}", id);
+
         var entity = repository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, getMessage("estabelecimento.notfound")
-                ));
+                .orElseThrow(() -> new EstabelecimentoNotFoundException(id));
 
         mapper.updateEntityFromDto(dto, entity);
-
         var updated = repository.save(entity);
-        return mapper.toResponse(updated);
+        var response = mapper.toResponse(updated);
+
+        log.info("Estabelecimento updated successfully with ID: {}", id);
+        return response;
     }
 
+    @Transactional
     public void delete(UUID id) {
+        log.info("Deleting estabelecimento with ID: {}", id);
+
         if (!repository.existsById(id)) {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND,
-                    getMessage("estabelecimento.delete.notfound")
-            );
+            throw new EstabelecimentoNotFoundException(id);
         }
-        repository.deleteById(id);
-    }
 
-    private String getMessage(String code, Object... args) {
-        Locale locale = LocaleContextHolder.getLocale();
-        return messageSource.getMessage(code, args, locale);
+        try {
+            repository.deleteById(id);
+            log.info("Estabelecimento deleted successfully with ID: {}", id);
+        } catch (DataIntegrityViolationException ex) {
+            log.warn("Cannot delete estabelecimento due to integrity constraints. ID: {}", id);
+            throw new EstabelecimentoIntegrityViolationException(id, "delete");
+        }
     }
-
 }
