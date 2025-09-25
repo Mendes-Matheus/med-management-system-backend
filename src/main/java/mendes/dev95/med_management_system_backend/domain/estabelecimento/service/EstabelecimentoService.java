@@ -21,10 +21,7 @@ import java.util.UUID;
 @Slf4j
 public class EstabelecimentoService {
 
-    @SuppressWarnings("EI_EXPOSE_REP2")
     private final EstabelecimentoRepository repository;
-
-    @SuppressWarnings("EI_EXPOSE_REP2")
     private final EstabelecimentoMapper mapper;
 
     @Transactional

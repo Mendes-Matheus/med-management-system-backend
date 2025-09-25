@@ -21,7 +21,6 @@ import java.util.UUID;
 @Slf4j
 public class EstabelecimentoController {
 
-    @SuppressWarnings("EI_EXPOSE_REP2") // EI = Expose Internal Representation
     private final EstabelecimentoService service;
 
     @PostMapping
