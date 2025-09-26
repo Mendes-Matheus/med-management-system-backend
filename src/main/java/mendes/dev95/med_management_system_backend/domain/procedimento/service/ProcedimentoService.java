@@ -5,10 +5,12 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
+import mendes.dev95.med_management_system_backend.domain.estabelecimento.exception.EstabelecimentoNotFoundException;
 import mendes.dev95.med_management_system_backend.domain.estabelecimento.repository.EstabelecimentoRepository;
 import mendes.dev95.med_management_system_backend.domain.procedimento.dto.ProcedimentoRequestDTO;
 import mendes.dev95.med_management_system_backend.domain.procedimento.dto.ProcedimentoResponseDTO;
 import mendes.dev95.med_management_system_backend.domain.procedimento.entity.Procedimento;
+import mendes.dev95.med_management_system_backend.domain.procedimento.exception.ProcedimentoNotFoundException;
 import mendes.dev95.med_management_system_backend.domain.procedimento.mapper.ProcedimentoMapper;
 import mendes.dev95.med_management_system_backend.domain.procedimento.repository.ProcedimentoRepository;
 import org.springframework.context.MessageSource;
@@ -36,9 +38,7 @@ public class ProcedimentoService {
         var entity = mapper.toEntity(dto);
 
         var estabelecimento = estabelecimentoRepository.findById(entity.getEstabelecimento().getId())
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, getMessage("estabelecimento.notfound")
-                ));
+                .orElseThrow(() -> new EstabelecimentoNotFoundException(entity.getEstabelecimento().getId()));
 
         var procedimentoToSave = Procedimento.builder()
                 .id(entity.getId())
@@ -58,26 +58,20 @@ public class ProcedimentoService {
     }
 
     public ProcedimentoResponseDTO findById(UUID id) {
-        var entity = repository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, getMessage("procedimento.notfound")
-                ));
-        return mapper.toResponse(entity);
+        var procedimento = repository.findById(id)
+                .orElseThrow(() -> new ProcedimentoNotFoundException(id));
+        return mapper.toResponse(procedimento);
     }
 
     public ProcedimentoResponseDTO update(UUID id, ProcedimentoRequestDTO dto) {
         var procedimento = repository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, getMessage("procedimento.notfound")
-                ));
+                .orElseThrow(() -> new ProcedimentoNotFoundException(id));
 
         mapper.updateEntityFromDto(dto, procedimento);
 
         if (dto.estabelecimentoId() == null) {
             var estabelecimento = estabelecimentoRepository.findById(procedimento.getEstabelecimento().getId())
-                    .orElseThrow(() -> new ResponseStatusException(
-                            HttpStatus.NOT_FOUND, getMessage("estabelecimento.notfound")
-                    ));
+                    .orElseThrow(() -> new EstabelecimentoNotFoundException(procedimento.getEstabelecimento().getId()));
             procedimento.setEstabelecimento(estabelecimento);
         }
 
@@ -87,7 +81,7 @@ public class ProcedimentoService {
 
     public void delete(UUID id) {
         if (!repository.existsById(id)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, getMessage("procedimento.notfound"));
+            throw new ProcedimentoNotFoundException(id);
         }
         repository.deleteById(id);
     }
