@@ -8,6 +8,8 @@ import mendes.dev95.med_management_system_backend.domain.estabelecimento.excepti
 import mendes.dev95.med_management_system_backend.domain.paciente.exception.PacienteAlreadyExistsException;
 import mendes.dev95.med_management_system_backend.domain.paciente.exception.PacienteIntegrityViolationException;
 import mendes.dev95.med_management_system_backend.domain.paciente.exception.PacienteNotFoundException;
+import mendes.dev95.med_management_system_backend.domain.procedimento.exception.ProcedimentoAgendadoException;
+import mendes.dev95.med_management_system_backend.domain.procedimento.exception.ProcedimentoNotFoundException;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -316,6 +318,46 @@ public class GlobalExceptionHandler {
 
         String message = getLocalizedMessage("paciente.delete.integrity.violation",
                 "Não é possível excluir o paciente devido a restrições de integridade");
+
+        ErrorResponse response = buildErrorResponse(
+                HttpStatus.CONFLICT,
+                getLocalizedMessage("error.conflict", "Conflict"),
+                List.of(message),
+                request,
+                correlationId
+        );
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
+    @ExceptionHandler(ProcedimentoNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleProcedimentoNotFound(
+            ProcedimentoNotFoundException ex, HttpServletRequest request) {
+
+        String correlationId = generateCorrelationId();
+        log.warn("\n\n{}\nCorrelation ID: {}\n", ex.getMessage(), correlationId);
+
+        String message = getLocalizedMessage("procedimento.notfound", "Procedimento não encontrado");
+
+        ErrorResponse response = buildErrorResponse(
+                HttpStatus.NOT_FOUND,
+                getLocalizedMessage("error.not.found", "Not Found"),
+                List.of(message),
+                request,
+                correlationId
+        );
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    @ExceptionHandler(ProcedimentoAgendadoException.class)
+    public ResponseEntity<ErrorResponse> handleProcedimentoAgendado(
+            ProcedimentoAgendadoException  ex, HttpServletRequest request
+    ){
+        String correlationId = generateCorrelationId();
+        log.warn("\n\n{}\nCorrelation ID: {}\n", ex.getMessage(), correlationId);
+
+        String message = getLocalizedMessage("procedimento.agendado", "Paciente já possui agendamento para este procedimento");
 
         ErrorResponse response = buildErrorResponse(
                 HttpStatus.CONFLICT,
