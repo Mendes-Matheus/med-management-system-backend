@@ -1,11 +1,7 @@
 package mendes.dev95.med_management_system_backend.domain.usuario.dto;
 
-import java.util.UUID;
-
-
-public record UsuarioResponseDTO(
-        UUID id,
+public record UsuarioUpdateRequestDTO(
         String username,
-        String email
+        String email,
+        String password
 ) {}
-

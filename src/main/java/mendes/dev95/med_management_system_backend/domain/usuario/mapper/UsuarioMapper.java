@@ -2,6 +2,7 @@ package mendes.dev95.med_management_system_backend.domain.usuario.mapper;
 
 import mendes.dev95.med_management_system_backend.domain.usuario.dto.UsuarioRegisterRequestDTO;
 import mendes.dev95.med_management_system_backend.domain.usuario.dto.UsuarioResponseDTO;
+import mendes.dev95.med_management_system_backend.domain.usuario.dto.UsuarioUpdateRequestDTO;
 import mendes.dev95.med_management_system_backend.domain.usuario.entity.Usuario;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -21,6 +22,7 @@ public interface UsuarioMapper {
 
     UsuarioResponseDTO toOptionalResponse(Optional<Usuario> entity);
 
+    Usuario toEntityFromUpdate(UsuarioUpdateRequestDTO dto);
 
     // converte lista de entidades em lista de respostas
     List<UsuarioResponseDTO> toResponseList(List<Usuario> entities);
@@ -28,5 +30,7 @@ public interface UsuarioMapper {
     // atualiza entidade existente a partir de um DTO (ignora id e version)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "version", ignore = true)
-    void updateEntityFromDto(UsuarioRegisterRequestDTO dto, @MappingTarget Usuario entity);
+    @Mapping(target = "password", ignore = true)
+    void updateEntityFromDto(UsuarioUpdateRequestDTO dto, @MappingTarget Usuario entity);
+
 }

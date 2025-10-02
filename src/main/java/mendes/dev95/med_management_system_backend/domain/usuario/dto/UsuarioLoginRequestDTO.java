@@ -8,7 +8,7 @@ public record UsuarioLoginRequestDTO(
 
         //@Schema(description = "E-mail do usuário", example = "usuario@email.com")
         @NotBlank(message = "O e-mail é obrigatório")
-        @Email(message = "E-mail inválido")
+        @Email(message = "Formato de e-mail inválido")
         String email,
 
         //@Schema(description = "Senha do usuário", example = "123456")
