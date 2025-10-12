@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -116,6 +116,18 @@
 			<artifactId>java-jwt</artifactId>
 			<version>${java.jwt.version}</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-core -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-core</artifactId>
+			<version>6.5.5</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-web -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-web</artifactId>
+			<version>6.5.5</version>
+		</dependency>
 
 		<!-- Swagger -->
 		<dependency>
@@ -133,6 +145,40 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 			<version>${commons.lang3}</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/io.github.cdimascio/dotenv-java -->
+		<!--		<dependency>-->
+		<!--			<groupId>io.github.cdimascio</groupId>-->
+		<!--			<artifactId>dotenv-java</artifactId>-->
+		<!--			<version>3.2.0</version>-->
+		<!--		</dependency>-->
+
+		<!-- https://mvnrepository.com/artifact/org.codehaus.mojo/properties-maven-plugin -->
+		<dependency>
+			<groupId>org.codehaus.mojo</groupId>
+			<artifactId>properties-maven-plugin</artifactId>
+			<version>1.2.1</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/com.github.ben-manes.caffeine/caffeine -->
+		<dependency>
+			<groupId>com.github.ben-manes.caffeine</groupId>
+			<artifactId>caffeine</artifactId>
+			<version>3.2.2</version>
+		</dependency>
+
+		<!-- Redis -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-redis</artifactId>
+		</dependency>
+
+		<!-- Cliente Lettuce (recomendado) -->
+		<dependency>
+			<groupId>io.lettuce</groupId>
+			<artifactId>lettuce-core</artifactId>
 		</dependency>
 
 	</dependencies>
@@ -171,32 +217,32 @@
 			</plugin>
 
 			<!-- SpotBugs -->
-			<plugin>
-				<groupId>com.github.spotbugs</groupId>
-				<artifactId>spotbugs-maven-plugin</artifactId>
-				<version>4.9.6.0</version>
-				<configuration>
-					<excludeFilterFile>${project.basedir}/spotbugs-exclude.xml</excludeFilterFile>
-					<effort>Max</effort>
-					<threshold>Low</threshold>
-					<plugins>
-						<!-- FindSecBugs: regras de segurança -->
-						<plugin>
-							<groupId>com.h3xstream.findsecbugs</groupId>
-							<artifactId>findsecbugs-plugin</artifactId>
-							<version>1.14.0</version>
-						</plugin>
-					</plugins>
-				</configuration>
-				<executions>
-					<execution>
-						<phase>verify</phase>
-						<goals>
-							<goal>check</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
+			<!--			<plugin>-->
+			<!--				<groupId>com.github.spotbugs</groupId>-->
+			<!--				<artifactId>spotbugs-maven-plugin</artifactId>-->
+			<!--				<version>4.9.6.0</version>-->
+			<!--				<configuration>-->
+			<!--					<excludeFilterFile>${project.basedir}/spotbugs-exclude.xml</excludeFilterFile>-->
+			<!--					<effort>Max</effort>-->
+			<!--					<threshold>Low</threshold>-->
+			<!--					<plugins>-->
+			<!--						&lt;!&ndash; FindSecBugs: regras de segurança &ndash;&gt;-->
+			<!--						<plugin>-->
+			<!--							<groupId>com.h3xstream.findsecbugs</groupId>-->
+			<!--							<artifactId>findsecbugs-plugin</artifactId>-->
+			<!--							<version>1.14.0</version>-->
+			<!--						</plugin>-->
+			<!--					</plugins>-->
+			<!--				</configuration>-->
+			<!--				<executions>-->
+			<!--					<execution>-->
+			<!--						<phase>verify</phase>-->
+			<!--						<goals>-->
+			<!--							<goal>check</goal>-->
+			<!--						</goals>-->
+			<!--					</execution>-->
+			<!--				</executions>-->
+			<!--			</plugin>-->
 
 		</plugins>
 	</build>

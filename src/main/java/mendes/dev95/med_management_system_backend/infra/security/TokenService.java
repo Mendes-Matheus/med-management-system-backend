@@ -1,59 +1,146 @@
 package mendes.dev95.med_management_system_backend.infra.security;
 
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import lombok.RequiredArgsConstructor;
 import mendes.dev95.med_management_system_backend.domain.usuario.entity.Usuario;
+import mendes.dev95.med_management_system_backend.infra.security.service.JwtBlocklistService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
+/**
+ * Serviço responsável por gerar e validar tokens JWT (Access e Refresh).
+ */
 @Service
+@RequiredArgsConstructor
 public class TokenService {
+
+    private final JwtBlocklistService jwtBlocklistService;
+
+    private  JWTVerifier jwtVerifier;
+
     @Value("${api.security.token.secret}")
     private String secret;
 
     @Value("${api.security.token.issuer}")
     private String issuer;
 
-    public String generateToken(Usuario usuario){
+    /** Tempo padrão de expiração do Access Token (15 minutos) */
+    @Value("${api.security.token.access-expiration-seconds:900}")
+    private Long accessExpirationSeconds;
+
+    /** Tempo padrão de expiração do Refresh Token (7 dias) */
+    @Value("${api.security.token.refresh-expiration-seconds:604800}")
+    private Long refreshExpirationSeconds;
+
+    /**
+     * Gera um Access Token com curta duração.
+     */
+    public String generateAccessToken(Usuario usuario) {
+        return generateToken(usuario, accessExpirationSeconds, "access");
+    }
+
+    /**
+     * Gera um Refresh Token com longa duração.
+     */
+    public String generateRefreshToken(Usuario usuario) {
+        return generateToken(usuario, refreshExpirationSeconds, "refresh");
+    }
+
+    /**
+     * Metodo interno para gerar token generico (Access ou Refresh).
+     */
+    private String generateToken(Usuario usuario, Long expirationSeconds, String type) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
 
-            String token = JWT.create()
+            List<String> authorities = usuario.getAuthorities().stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .toList();
+
+            Instant now = Instant.now();
+            Instant expiresAt = now.plusSeconds(expirationSeconds);
+
+            return JWT.create()
                     .withIssuer(issuer)
                     .withSubject(usuario.getEmail())
-                    .withExpiresAt(this.generateExpirationDate())
+                    .withClaim("id", usuario.getId().toString())
+                    .withClaim("authorities", authorities)
+                    .withClaim("type", type)
+                    .withJWTId(UUID.randomUUID().toString()) // gera o JTI
+                    .withIssuedAt(Date.from(now))
+                    .withExpiresAt(Date.from(expiresAt))
                     .sign(algorithm);
-            return token;
-        } catch (JWTCreationException exception){
-            throw new ResponseStatusException(
-                    HttpStatus.INTERNAL_SERVER_ERROR,
-                    "token.errorwhilecreatingtoken"
-            );
+
+        } catch (JWTCreationException ex) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "token.errorwhilecreatingtoken", ex);
         }
     }
 
-    public String validateToken(String token){
+    /**
+     * Valida e retorna o JWT decodificado (ou null se inválido).
+     */
+    public DecodedJWT validateAndGetDecoded(String token) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.require(algorithm)
                     .withIssuer(issuer)
                     .build()
-                    .verify(token)
-                    .getSubject();
-        } catch (JWTVerificationException exception) {
+                    .verify(token);
+        } catch (JWTVerificationException ex) {
             return null;
         }
     }
 
-    private Instant generateExpirationDate(){
-        return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00"));
+    /**
+     * Extrai o e-mail (subject) do token.
+     */
+    public String getUsername(String token) {
+        try {
+            return JWT.decode(token).getSubject();
+        } catch (Exception ex) {
+            return null;
+        }
+    }
+
+    /**
+     * Extrai a data de expiração do token.
+     */
+    public Date getExpiration(String token) {
+        try {
+            return JWT.decode(token).getExpiresAt();
+        } catch (Exception ex) {
+            return null;
+        }
+    }
+
+    /**
+     * Extrai o JTI (JWT ID) usado na revogação.
+     */
+    public String getJti(String token) {
+        try {
+            return JWT.decode(token).getId();
+        } catch (Exception ex) {
+            return null;
+        }
+    }
+
+    /**
+     * Metodo legado para compatibilidade com código antigo (gera Access Token padrão).
+     */
+    public String generateToken(Usuario usuario) {
+        return generateAccessToken(usuario);
     }
 }

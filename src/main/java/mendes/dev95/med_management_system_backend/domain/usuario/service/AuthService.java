@@ -7,13 +7,12 @@ import mendes.dev95.med_management_system_backend.domain.usuario.dto.UsuarioAuth
 import mendes.dev95.med_management_system_backend.domain.usuario.dto.UsuarioLoginRequestDTO;
 import mendes.dev95.med_management_system_backend.domain.usuario.dto.UsuarioRegisterRequestDTO;
 import mendes.dev95.med_management_system_backend.domain.usuario.entity.Usuario;
-import mendes.dev95.med_management_system_backend.domain.usuario.exception.InvalidCredentialsException;
-import mendes.dev95.med_management_system_backend.domain.usuario.exception.TokenGenerationException;
-import mendes.dev95.med_management_system_backend.domain.usuario.exception.UsuarioAlreadyExistsException;
-import mendes.dev95.med_management_system_backend.domain.usuario.exception.UsuarioRegistrationException;
+import mendes.dev95.med_management_system_backend.domain.usuario.exception.*;
 import mendes.dev95.med_management_system_backend.domain.usuario.mapper.UsuarioMapper;
 import mendes.dev95.med_management_system_backend.domain.usuario.repository.UsuarioRepository;
 import mendes.dev95.med_management_system_backend.infra.security.TokenService;
+import mendes.dev95.med_management_system_backend.infra.security.service.JwtBlocklistService;
+import mendes.dev95.med_management_system_backend.infra.security.service.RefreshTokenService;
 import mendes.dev95.med_management_system_backend.infra.util.MaskUtil;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -22,7 +21,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
+import java.time.Instant;
+import java.util.Date;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +34,8 @@ public class AuthService {
     private final TokenService tokenService;
     private final MessageSource messageSource;
     private final UsuarioMapper mapper;
+    private final RefreshTokenService refreshTokenService;
+    private final JwtBlocklistService blocklistService;
 
     public UsuarioAuthResponseDTO login(UsuarioLoginRequestDTO request) {
         String maskedEmail = MaskUtil.maskEmail(request.email());
@@ -79,12 +81,20 @@ public class AuthService {
 
     private UsuarioAuthResponseDTO createAuthResponse(Usuario usuario) {
         try {
-            String token = tokenService.generateToken(usuario);
+            String accessToken = tokenService.generateAccessToken(usuario);
+            String refreshToken = tokenService.generateRefreshToken(usuario);
+
+            Instant refreshExp = tokenService.getExpiration(refreshToken).toInstant();
+
+            refreshTokenService.create(usuario.getEmail(), refreshToken, refreshExp);
+
             return new UsuarioAuthResponseDTO(
                     usuario.getId(),
                     usuario.getUsername(),
                     usuario.getEmail(),
-                    token
+                    accessToken,
+                    refreshToken,
+                    refreshExp
             );
         } catch (Exception ex) {
             log.error("Erro ao gerar token para: {}", MaskUtil.maskEmail(usuario.getEmail()), ex);
@@ -92,8 +102,40 @@ public class AuthService {
         }
     }
 
+    public String extractJti(String token) {
+        try {
+            return tokenService.getJti(token);
+        } catch (Exception ex) {
+            log.warn("Falha ao extrair JTI do token");
+            return null;
+        }
+    }
+
+    public long remainingValidityMillis(String token) {
+        try {
+            Date exp = tokenService.getExpiration(token);
+            return exp.getTime() - System.currentTimeMillis();
+        } catch (Exception ex) {
+            return 0;
+        }
+    }
+
+    public String extractUsername(String token) {
+        try {
+            return tokenService.getUsername(token);
+        } catch (Exception ex) {
+            log.warn("Falha ao extrair username do token");
+            return null;
+        }
+    }
+
+    public UsuarioAuthResponseDTO generateTokens(String username) {
+        var usuario = repository.findByEmail(username)
+                .orElseThrow(() -> new InvalidCredentialsException(getMessage("usuario.invalidemailorpassword")));
+        return createAuthResponse(usuario);
+    }
+
     private String getMessage(@NonNull String code, @NonNull Object... args) {
         return messageSource.getMessage(code, args, LocaleContextHolder.getLocale());
     }
 }
-

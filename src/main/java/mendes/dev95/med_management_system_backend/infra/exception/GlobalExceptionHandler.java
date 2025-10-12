@@ -233,7 +233,7 @@ public class GlobalExceptionHandler {
             EstabelecimentoNotFoundException ex, HttpServletRequest request) {
 
         String correlationId = generateCorrelationId();
-        log.warn("\n\n{}\nCorrelation ID: {}\n", ex.getMessage(), correlationId);
+        log.warn("{} - Correlation ID: {}", ex.getMessage(), correlationId);
 
         String message = getLocalizedMessage("estabelecimento.notfound", "Estabelecimento não encontrado");
 
@@ -253,7 +253,7 @@ public class GlobalExceptionHandler {
             PacienteAlreadyExistsException ex, HttpServletRequest request
     ){
         String correlationId = generateCorrelationId();
-        log.warn("\n\n{}\nCorrelation ID: {}\n", ex.getMessage(), correlationId);
+        log.warn("{} - Correlation ID: {}", ex.getMessage(), correlationId);
 
         String message = getLocalizedMessage("paciente.alreadyexists", "Paciente já cadastrado");
 
@@ -294,7 +294,7 @@ public class GlobalExceptionHandler {
             PacienteNotFoundException ex, HttpServletRequest request) {
 
         String correlationId = generateCorrelationId();
-        log.warn("\n\n{}\nCorrelation ID: {}\n", ex.getMessage(), correlationId);
+        log.warn("{} - Correlation ID: {}", ex.getMessage(), correlationId);
 
         String message = getLocalizedMessage("paciente.notfound", "Paciente não encontrado");
 
@@ -335,7 +335,7 @@ public class GlobalExceptionHandler {
             ProcedimentoNotFoundException ex, HttpServletRequest request) {
 
         String correlationId = generateCorrelationId();
-        log.warn("\n\n{}\nCorrelation ID: {}\n", ex.getMessage(), correlationId);
+        log.warn("{} - Correlation ID: {}", ex.getMessage(), correlationId);
 
         String message = getLocalizedMessage("procedimento.notfound", "Procedimento não encontrado");
 
@@ -355,7 +355,7 @@ public class GlobalExceptionHandler {
             ProcedimentoAgendadoException  ex, HttpServletRequest request
     ){
         String correlationId = generateCorrelationId();
-        log.warn("\n\n{}\nCorrelation ID: {}\n", ex.getMessage(), correlationId);
+        log.warn("{} - Correlation ID: {}", ex.getMessage(), correlationId);
 
         String message = getLocalizedMessage("procedimento.agendado", "Paciente já possui agendamento para este procedimento");
 

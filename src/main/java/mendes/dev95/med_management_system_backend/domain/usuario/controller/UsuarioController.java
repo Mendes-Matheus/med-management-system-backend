@@ -31,11 +31,10 @@ public class UsuarioController {
     }
 
     @GetMapping("/id/{id}")
-    public ResponseEntity<UsuarioResponseDTO> findByEmail(@PathVariable UUID id) {
+    public ResponseEntity<UsuarioResponseDTO> findById(@PathVariable UUID id) {
         UsuarioResponseDTO usuario = usuarioService.findUsuarioById(id);
         return ResponseEntity.ok(usuario);
     }
-
 
     @PutMapping
     public ResponseEntity<UsuarioResponseDTO> update(@Valid @RequestBody UsuarioUpdateRequestDTO request) {
