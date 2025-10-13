@@ -3,13 +3,13 @@ package mendes.dev95.med_management_system_backend.infra.security.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.redis.core.RedisHash;
 
 import java.time.Instant;
 
-@Entity
-@Table(name = "refresh_tokens")
 @Getter
 @Setter
+@RedisHash("refreshToken")
 public class RefreshToken {
 
     @Id

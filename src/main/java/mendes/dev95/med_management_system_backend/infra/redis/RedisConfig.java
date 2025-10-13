@@ -1,4 +1,4 @@
-package mendes.dev95.med_management_system_backend.infra.config;
+package mendes.dev95.med_management_system_backend.infra.redis;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,7 +8,7 @@ import org.springframework.data.redis.repository.configuration.EnableRedisReposi
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
-@EnableRedisRepositories
+@EnableRedisRepositories(basePackages = "mendes.dev95.med_management_system_backend.infra.redis.repository")
 public class RedisConfig {
 
     @Bean
