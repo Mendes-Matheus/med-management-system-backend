@@ -3,10 +3,12 @@ package mendes.dev95.med_management_system_backend.domain.procedimentopaciente.r
 import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.entity.ProcedimentoPaciente;
 import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.entity.StatusProcedimento;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.UUID;
 
+@Repository
 public interface ProcedimentoPacienteRepository extends JpaRepository<ProcedimentoPaciente, UUID> {
 
     ProcedimentoPaciente findByPacienteId(UUID pacienteId);
