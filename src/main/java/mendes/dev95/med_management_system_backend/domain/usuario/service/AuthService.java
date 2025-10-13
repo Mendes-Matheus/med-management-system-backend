@@ -89,12 +89,12 @@ public class AuthService {
 
         if (repository.findByCpf(cpf).isPresent()) {
             log.warn("Tentativa de registro com CPF já existente: {}", MaskUtil.maskCpf(cpf));
-            throw new UsuarioAlreadyExistsException(getMessage("usuario.cpf.alreadyexists"));
+            throw new UsuarioAlreadyExistsException(getMessage("Usuario com esse CPF já existe"));
         }
 
         if (repository.findByUsername(username).isPresent()) {
             log.warn("Tentativa de registro com username já existente: {}", username);
-            throw new UsuarioAlreadyExistsException(getMessage("usuario.username.alreadyexists"));
+            throw new UsuarioAlreadyExistsException(getMessage("Usuario com esse username já existe"));
         }
     }
 
