@@ -28,8 +28,9 @@ spring:
     enabled: true
     baseline-on-migrate: true
 
-#  data:
-#    redis:
+  data:
+    redis:
+      url: ${REDIS_URL}
 #      host: ${REDIS_HOST}
 #      port: ${REDIS_PORT:6379}
 
