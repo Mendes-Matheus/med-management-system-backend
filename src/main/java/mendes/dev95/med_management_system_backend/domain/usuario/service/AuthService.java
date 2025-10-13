@@ -11,7 +11,6 @@ import mendes.dev95.med_management_system_backend.domain.usuario.exception.*;
 import mendes.dev95.med_management_system_backend.domain.usuario.mapper.UsuarioMapper;
 import mendes.dev95.med_management_system_backend.domain.usuario.repository.UsuarioRepository;
 import mendes.dev95.med_management_system_backend.infra.security.TokenService;
-import mendes.dev95.med_management_system_backend.infra.security.service.JwtBlocklistService;
 import mendes.dev95.med_management_system_backend.infra.security.service.RefreshTokenService;
 import mendes.dev95.med_management_system_backend.infra.util.MaskUtil;
 import org.springframework.context.MessageSource;
@@ -35,7 +34,6 @@ public class AuthService {
     private final MessageSource messageSource;
     private final UsuarioMapper mapper;
     private final RefreshTokenService refreshTokenService;
-    private final JwtBlocklistService blocklistService;
 
     public UsuarioAuthResponseDTO login(UsuarioLoginRequestDTO request) {
         String maskedEmail = MaskUtil.maskEmail(request.email());
@@ -61,6 +59,9 @@ public class AuthService {
         String maskedEmail = MaskUtil.maskEmail(request.email());
         log.debug("Tentando registrar usuário: {}", maskedEmail);
 
+        var entity = mapper.toEntity(request);
+        validateUser(entity);
+
         try {
             var usuario = mapper.toEntity(request);
             usuario.setPassword(passwordEncoder.encode(request.password()));
@@ -76,6 +77,17 @@ public class AuthService {
         } catch (Exception ex) {
             log.error("Erro inesperado no registro de usuário: {}", maskedEmail, ex);
             throw new UsuarioRegistrationException(getMessage("usuario.registration.error"), ex);
+        }
+    }
+
+    private void validateUser(Usuario usuario) {
+        if (
+            repository.existsByCpf(usuario.getCpf()) ||
+            repository.existsByUsername(usuario.getUsername()) ||
+            repository.existsById(usuario.getId()) ||
+            repository.existsByEmail(usuario.getEmail())
+        ) {
+            throw new UsuarioAlreadyExistsException(getMessage("usuario.alreadyexists"));
         }
     }
 

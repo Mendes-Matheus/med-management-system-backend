@@ -40,8 +40,8 @@ public class PacienteService {
             repository.existsByCns(paciente.getCns()) ||
             repository.existsByEmail(paciente.getEmail())
         ) {
-        throw new PacienteAlreadyExistsException();
-            }
+            throw new PacienteAlreadyExistsException(getMessage("paciente.alreadyExists"));
+        }
     }
 
     public List<PacienteResponseDTO> findAll() {
