@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import mendes.dev95.med_management_system_backend.domain.usuario.entity.Usuario;
 import mendes.dev95.med_management_system_backend.domain.usuario.repository.UsuarioRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,7 +26,10 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 public class SecurityFilter extends OncePerRequestFilter {
-    private final TokenService tokenService;
+
+    @Autowired
+    private TokenService tokenService;
+    @Autowired
     private final UsuarioRepository userRepository;
 
     private static final int MAX_TOKEN_LENGTH = 4096; // proteção simples

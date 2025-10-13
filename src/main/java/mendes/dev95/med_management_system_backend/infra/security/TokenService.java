@@ -1,14 +1,12 @@
 package mendes.dev95.med_management_system_backend.infra.security;
 
 import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.RequiredArgsConstructor;
 import mendes.dev95.med_management_system_backend.domain.usuario.entity.Usuario;
-import mendes.dev95.med_management_system_backend.infra.security.service.JwtBlocklistService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.GrantedAuthority;
@@ -27,9 +25,10 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class TokenService {
 
-    private final JwtBlocklistService jwtBlocklistService;
-
-    private  JWTVerifier jwtVerifier;
+//    @Autowired
+//    private JwtBlocklistService jwtBlocklistService;
+//
+//    private  JWTVerifier jwtVerifier;
 
     @Value("${api.security.token.secret}")
     private String secret;

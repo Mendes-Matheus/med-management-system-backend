@@ -1,6 +1,7 @@
 package mendes.dev95.med_management_system_backend.infra.security;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,9 +28,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final SecurityFilter securityFilter;
+    @Autowired
+    private SecurityFilter securityFilter;
+    @Autowired
     private final LoggingContextFilter loggingContextFilter;
+    @Autowired
     private final Environment env;
+    @Autowired
     private final SimpleRateLimitingFilter simpleRateLimitingFilter;
 
     @Bean
