@@ -297,7 +297,7 @@ public class GlobalExceptionHandler {
         String correlationId = generateCorrelationId();
         log.warn("{} - Correlation ID: {}", ex.getMessage(), correlationId);
 
-        String message = getLocalizedMessage("usuario.alreadyexists", "Usuario já cadastrado");
+        String message = getLocalizedMessage(ex.getMessage(), "Usuario já cadastrado");
 
         ErrorResponse response = buildErrorResponse(
                 HttpStatus.CONFLICT,
