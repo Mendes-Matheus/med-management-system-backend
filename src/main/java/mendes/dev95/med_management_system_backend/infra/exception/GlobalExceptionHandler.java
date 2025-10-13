@@ -10,6 +10,7 @@ import mendes.dev95.med_management_system_backend.domain.paciente.exception.Paci
 import mendes.dev95.med_management_system_backend.domain.paciente.exception.PacienteNotFoundException;
 import mendes.dev95.med_management_system_backend.domain.procedimento.exception.ProcedimentoAgendadoException;
 import mendes.dev95.med_management_system_backend.domain.procedimento.exception.ProcedimentoNotFoundException;
+import mendes.dev95.med_management_system_backend.domain.usuario.exception.UsuarioAlreadyExistsException;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -288,6 +289,27 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
+
+    @ExceptionHandler(UsuarioAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> UsuarioAlreadyExistsE(
+            UsuarioAlreadyExistsException ex, HttpServletRequest request
+    ){
+        String correlationId = generateCorrelationId();
+        log.warn("{} - Correlation ID: {}", ex.getMessage(), correlationId);
+
+        String message = getLocalizedMessage("usuario.alreadyexists", "Usuario já cadastrado");
+
+        ErrorResponse response = buildErrorResponse(
+                HttpStatus.CONFLICT,
+                getLocalizedMessage("error.conflict", "Conflict"),
+                List.of(message),
+                request,
+                correlationId
+        );
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
 
     @ExceptionHandler(PacienteNotFoundException.class)
     public ResponseEntity<ErrorResponse> handlePacienteNotFound(
