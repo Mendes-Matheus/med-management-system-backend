@@ -291,7 +291,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(UsuarioAlreadyExistsException.class)
-    public ResponseEntity<ErrorResponse> UsuarioAlreadyExistsE(
+    public ResponseEntity<ErrorResponse> UsuarioAlreadyExists(
             UsuarioAlreadyExistsException ex, HttpServletRequest request
     ){
         String correlationId = generateCorrelationId();

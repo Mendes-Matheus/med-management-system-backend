@@ -84,7 +84,7 @@ public class AuthService {
     private void ensureUniqueUser(String email, String cpf, String username) {
         if (repository.findByEmail(email).isPresent()) {
             log.warn("Tentativa de registro com e-mail já existente: {}", MaskUtil.maskEmail(email));
-            throw new UsuarioAlreadyExistsException(getMessage("usuario.email.alreadyexists"));
+            throw new UsuarioAlreadyExistsException(getMessage("Usuario com esse e-mail já existe"));
         }
 
         if (repository.findByCpf(cpf).isPresent()) {
