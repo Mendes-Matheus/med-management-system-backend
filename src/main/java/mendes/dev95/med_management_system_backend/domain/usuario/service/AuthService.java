@@ -59,52 +59,45 @@ public class AuthService {
         String maskedEmail = MaskUtil.maskEmail(request.email());
         log.debug("Tentando registrar usuário: {}", maskedEmail);
 
-        var entity = mapper.toEntity(request);
-
-        var usuarioByEmail = repository.findByEmail(entity.getEmail())
-                .orElseThrow(() -> {
-                    return new UsuarioAlreadyExistsException(getMessage("usuario.invalidemailorpassword"));
-                });
-
-        var usuarioByCpf = repository.findByCpf(entity.getCpf())
-                .orElseThrow(() -> {
-                    return new UsuarioAlreadyExistsException(getMessage("usuario.invalidemailorpassword"));
-                });
-
-        var usuarioByUsername = repository.findByUsername(entity.getUsername())
-                .orElseThrow(() -> {
-                    return new UsuarioAlreadyExistsException(getMessage("usuario.cpf.alreadyexists"));
-                });
-
         try {
+            ensureUniqueUser(request.email(), request.cpf(), request.username());
+
             var usuario = mapper.toEntity(request);
             usuario.setPassword(passwordEncoder.encode(request.password()));
 
             var saved = repository.save(usuario);
-            log.info("Usuário registrado com sucesso: {}", MaskUtil.maskEmail(saved.getEmail()));
+            log.info("Usuário registrado com sucesso: {}", maskedEmail);
 
             return createAuthResponse(saved);
 
+        } catch (UsuarioAlreadyExistsException ex) {
+            throw ex;
         } catch (DataIntegrityViolationException ex) {
-            log.warn("Tentativa de registro com e-mail já existente: {}", maskedEmail);
-            throw new UsuarioAlreadyExistsException(getMessage("usuario.email.alreadyexists"), ex);
+            log.error("Violação de integridade ao registrar usuário: {}", maskedEmail, ex);
+            throw new UsuarioAlreadyExistsException(getMessage("usuario.registration.conflict"), ex);
         } catch (Exception ex) {
             log.error("Erro inesperado no registro de usuário: {}", maskedEmail, ex);
             throw new UsuarioRegistrationException(getMessage("usuario.registration.error"), ex);
         }
     }
 
-    private boolean validateUser(Usuario usuario) {
-        if (
-            repository.existsByCpf(usuario.getCpf()) ||
-            repository.existsByUsername(usuario.getUsername()) ||
-            repository.existsById(usuario.getId()) ||
-            repository.existsByEmail(usuario.getEmail())
-        ){
-            return false;
+    private void ensureUniqueUser(String email, String cpf, String username) {
+        if (repository.findByEmail(email).isPresent()) {
+            log.warn("Tentativa de registro com e-mail já existente: {}", MaskUtil.maskEmail(email));
+            throw new UsuarioAlreadyExistsException(getMessage("usuario.email.alreadyexists"));
         }
-        return true;
+
+        if (repository.findByCpf(cpf).isPresent()) {
+            log.warn("Tentativa de registro com CPF já existente: {}", MaskUtil.maskCpf(cpf));
+            throw new UsuarioAlreadyExistsException(getMessage("usuario.cpf.alreadyexists"));
+        }
+
+        if (repository.findByUsername(username).isPresent()) {
+            log.warn("Tentativa de registro com username já existente: {}", username);
+            throw new UsuarioAlreadyExistsException(getMessage("usuario.username.alreadyexists"));
+        }
     }
+
 
     private UsuarioAuthResponseDTO createAuthResponse(Usuario usuario) {
         try {
