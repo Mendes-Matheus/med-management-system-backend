@@ -60,7 +60,21 @@ public class AuthService {
         log.debug("Tentando registrar usuário: {}", maskedEmail);
 
         var entity = mapper.toEntity(request);
-        validateUser(entity);
+
+        var usuarioByEmail = repository.findByEmail(entity.getEmail())
+                .orElseThrow(() -> {
+                    return new UsuarioAlreadyExistsException(getMessage("usuario.invalidemailorpassword"));
+                });
+
+        var usuarioByCpf = repository.findByCpf(entity.getCpf())
+                .orElseThrow(() -> {
+                    return new UsuarioAlreadyExistsException(getMessage("usuario.invalidemailorpassword"));
+                });
+
+        var usuarioByUsername = repository.findByUsername(entity.getUsername())
+                .orElseThrow(() -> {
+                    return new UsuarioAlreadyExistsException(getMessage("usuario.cpf.alreadyexists"));
+                });
 
         try {
             var usuario = mapper.toEntity(request);
@@ -80,15 +94,16 @@ public class AuthService {
         }
     }
 
-    private void validateUser(Usuario usuario) {
+    private boolean validateUser(Usuario usuario) {
         if (
             repository.existsByCpf(usuario.getCpf()) ||
             repository.existsByUsername(usuario.getUsername()) ||
             repository.existsById(usuario.getId()) ||
             repository.existsByEmail(usuario.getEmail())
-        ) {
-            throw new UsuarioAlreadyExistsException(getMessage("usuario.alreadyexists"));
+        ){
+            return false;
         }
+        return true;
     }
 
     private UsuarioAuthResponseDTO createAuthResponse(Usuario usuario) {
