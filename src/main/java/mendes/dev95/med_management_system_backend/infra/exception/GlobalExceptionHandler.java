@@ -292,17 +292,18 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UsuarioAlreadyExistsException.class)
     public ResponseEntity<ErrorResponse> UsuarioAlreadyExists(
-            UsuarioAlreadyExistsException ex, HttpServletRequest request
-    ){
+            UsuarioAlreadyExistsException ex,
+            HttpServletRequest request
+    ) {
         String correlationId = generateCorrelationId();
         log.warn("{} - Correlation ID: {}", ex.getMessage(), correlationId);
 
-        String message = getLocalizedMessage(ex.getMessage(), "Usuario já cadastrado");
+        String localizedMessage = getLocalizedMessage(ex.getMessage(), "Usuário já cadastrado");
 
         ErrorResponse response = buildErrorResponse(
                 HttpStatus.CONFLICT,
                 getLocalizedMessage("error.conflict", "Conflict"),
-                List.of(message),
+                List.of(localizedMessage),
                 request,
                 correlationId
         );

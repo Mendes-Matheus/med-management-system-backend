@@ -84,19 +84,20 @@ public class AuthService {
     private void ensureUniqueUser(String email, String cpf, String username) {
         if (repository.findByEmail(email).isPresent()) {
             log.warn("Tentativa de registro com e-mail já existente: {}", MaskUtil.maskEmail(email));
-            throw new UsuarioAlreadyExistsException("Usuario com esse e-mail já existe");
+            throw new UsuarioAlreadyExistsException("usuario.email.alreadyexists");
         }
 
         if (repository.findByCpf(cpf).isPresent()) {
             log.warn("Tentativa de registro com CPF já existente: {}", MaskUtil.maskCpf(cpf));
-            throw new UsuarioAlreadyExistsException("Usuario com esse CPF já existe");
+            throw new UsuarioAlreadyExistsException("usuario.cpf.alreadyexists");
         }
 
         if (repository.findByUsername(username).isPresent()) {
             log.warn("Tentativa de registro com username já existente: {}", username);
-            throw new UsuarioAlreadyExistsException("Usuario com esse username já existe");
+            throw new UsuarioAlreadyExistsException("usuario.username.alreadyexists");
         }
     }
+
 
 
     private UsuarioAuthResponseDTO createAuthResponse(Usuario usuario) {
