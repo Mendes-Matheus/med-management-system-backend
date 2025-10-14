@@ -43,22 +43,22 @@ public class PacienteService {
     }
 
     private void ensureUniquePaciente(String cpf, String rg, String cns, String email) {
-        if (repository.existsByCpf(cpf)) {
+        if (repository.findByCpf(cpf).isPresent()) {
             log.warn("Tentativa de registro com CPF já existente: {}", MaskUtil.maskCpf(cpf));
             throw new PacienteAlreadyExistsException("paciente.cpf.alreadyexists");
         }
 
-        if (repository.existsByRg(rg)) {
+        if (repository.findByRg(rg).isPresent()) {
             log.warn("Tentativa de registro com RG já existente: {}", rg);
             throw new PacienteAlreadyExistsException("paciente.rg.alreadyexists");
         }
 
-        if (repository.existsByCns(cns)) {
+        if (repository.findByCns(cns).isPresent()) {
             log.warn("Tentativa de registro com CNS já existente: {}", cns);
             throw new PacienteAlreadyExistsException("paciente.cns.alreadyexists");
         }
 
-        if (repository.existsByEmail(email)) {
+        if (repository.findByEmail(email).isPresent()) {
             log.warn("Tentativa de registro com e-mail já existente: {}", MaskUtil.maskEmail(email));
             throw new PacienteAlreadyExistsException("paciente.email.alreadyexists");
         }
