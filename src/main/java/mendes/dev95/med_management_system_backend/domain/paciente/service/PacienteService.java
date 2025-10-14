@@ -1,6 +1,7 @@
 package mendes.dev95.med_management_system_backend.domain.paciente.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import mendes.dev95.med_management_system_backend.domain.paciente.dto.PacienteRequestDTO;
 import mendes.dev95.med_management_system_backend.domain.paciente.dto.PacienteResponseDTO;
 import mendes.dev95.med_management_system_backend.domain.paciente.dto.PacienteResponseWithProcedimentosDTO;
@@ -9,9 +10,11 @@ import mendes.dev95.med_management_system_backend.domain.paciente.exception.Paci
 import mendes.dev95.med_management_system_backend.domain.paciente.exception.PacienteNotFoundException;
 import mendes.dev95.med_management_system_backend.domain.paciente.mapper.PacienteMapper;
 import mendes.dev95.med_management_system_backend.domain.paciente.repository.PacienteRepository;
+import mendes.dev95.med_management_system_backend.infra.util.MaskUtil;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Locale;
@@ -19,28 +22,45 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class PacienteService {
 
     private final PacienteRepository repository;
     private final MessageSource messageSource;
     private final PacienteMapper mapper;
 
+    @Transactional
     public PacienteResponseDTO save(PacienteRequestDTO dto) {
-        var entity = mapper.toEntity(dto);
-        validatePatient(entity);
+        log.debug("Tentando salvar paciente com CPF: {}", MaskUtil.maskCpf(dto.cpf()));
 
+        ensureUniquePaciente(dto.cpf(), dto.rg(), dto.cns(), dto.email());
+
+        var entity = mapper.toEntity(dto);
         var saved = repository.save(entity);
+
+        log.info("Paciente salvo com sucesso: {}", MaskUtil.maskCpf(saved.getCpf()));
         return mapper.toResponse(saved);
     }
 
-    private void validatePatient(Paciente paciente) {
-        if (
-            repository.existsByCpf(paciente.getCpf()) ||
-            repository.existsByRg(paciente.getRg()) ||
-            repository.existsByCns(paciente.getCns()) ||
-            repository.existsByEmail(paciente.getEmail())
-        ) {
-            throw new PacienteAlreadyExistsException(getMessage("paciente.alreadyExists"));
+    private void ensureUniquePaciente(String cpf, String rg, String cns, String email) {
+        if (repository.existsByCpf(cpf)) {
+            log.warn("Tentativa de registro com CPF já existente: {}", MaskUtil.maskCpf(cpf));
+            throw new PacienteAlreadyExistsException("paciente.cpf.alreadyexists");
+        }
+
+        if (repository.existsByRg(rg)) {
+            log.warn("Tentativa de registro com RG já existente: {}", rg);
+            throw new PacienteAlreadyExistsException("paciente.rg.alreadyexists");
+        }
+
+        if (repository.existsByCns(cns)) {
+            log.warn("Tentativa de registro com CNS já existente: {}", cns);
+            throw new PacienteAlreadyExistsException("paciente.cns.alreadyexists");
+        }
+
+        if (repository.existsByEmail(email)) {
+            log.warn("Tentativa de registro com e-mail já existente: {}", MaskUtil.maskEmail(email));
+            throw new PacienteAlreadyExistsException("paciente.email.alreadyexists");
         }
     }
 
@@ -72,21 +92,25 @@ public class PacienteService {
         return mapper.toDetailResponse(entity);
     }
 
+    @Transactional
     public PacienteResponseDTO update(UUID id, PacienteRequestDTO dto) {
         var paciente = repository.findById(id)
                 .orElseThrow(() -> new PacienteNotFoundException(id));
 
         mapper.entityFromDto(dto, paciente);
-
         var updated = repository.save(paciente);
+
+        log.info("Paciente atualizado com sucesso: {}", MaskUtil.maskCpf(updated.getCpf()));
         return mapper.toResponse(updated);
     }
 
+    @Transactional
     public void delete(UUID id) {
         if (!repository.existsById(id)) {
             throw new PacienteNotFoundException(id);
         }
         repository.deleteById(id);
+        log.info("Paciente removido com sucesso: {}", id);
     }
 
     private String getMessage(String code, Object... args) {
