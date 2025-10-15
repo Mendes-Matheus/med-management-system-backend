@@ -14,6 +14,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public interface ProcedimentoPacienteMapper {
@@ -75,21 +76,27 @@ public interface ProcedimentoPacienteMapper {
     private static ProcedimentoResponseDTO getProcedimentoResponseDTO(ProcedimentoPaciente ep){
         var procedimento = ep.getProcedimento();
 
-        var estabelecimento = procedimento.getEstabelecimento() != null
-                ? new EstabelecimentoSimpleResponseDTO(
-                procedimento.getEstabelecimento().getNomeEstabelecimento()
-        ) : null;
+        // CORREÇÃO: Agora trabalhamos com lista de estabelecimentos
+        List<EstabelecimentoSimpleResponseDTO> estabelecimentosDTO = null;
+
+        if (procedimento.getEstabelecimentos() != null && !procedimento.getEstabelecimentos().isEmpty()) {
+            estabelecimentosDTO = procedimento.getEstabelecimentos().stream()
+                    .map(estabelecimento -> new EstabelecimentoSimpleResponseDTO(
+                            estabelecimento.getNomeEstabelecimento() // ou getNomeEstabelecimento() dependendo do seu modelo
+                    ))
+                    .collect(Collectors.toList());
+        }
 
         return new ProcedimentoResponseDTO(
                 procedimento.getId(),
                 procedimento.getVersion(),
                 procedimento.getNomeProcedimento(),
+                procedimento.getTipoProcedimento(),
                 procedimento.getObservacoes(),
                 procedimento.getOrientacoes(),
-                estabelecimento
+                estabelecimentosDTO
         );
     }
-
     default List<ProcedimentoPacienteResponseDTO> toResponseList(List<ProcedimentoPaciente> entities){
         return entities.stream()
                 .map(this::toResponse)

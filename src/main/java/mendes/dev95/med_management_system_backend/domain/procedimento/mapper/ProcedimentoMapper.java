@@ -1,6 +1,5 @@
 package mendes.dev95.med_management_system_backend.domain.procedimento.mapper;
 
-import mendes.dev95.med_management_system_backend.domain.estabelecimento.entity.Estabelecimento;
 import mendes.dev95.med_management_system_backend.domain.estabelecimento.mapper.EstabelecimentoMapper;
 import mendes.dev95.med_management_system_backend.domain.procedimento.dto.ProcedimentoRequestDTO;
 import mendes.dev95.med_management_system_backend.domain.procedimento.dto.ProcedimentoResponseDTO;
@@ -14,6 +13,7 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses = {EstabelecimentoMapper.class})
 public interface ProcedimentoMapper {
 
+    @Mapping(target = "estabelecimentos", ignore = true)
     default Procedimento toEntity(ProcedimentoRequestDTO dto) {
 
         return Procedimento.builder()

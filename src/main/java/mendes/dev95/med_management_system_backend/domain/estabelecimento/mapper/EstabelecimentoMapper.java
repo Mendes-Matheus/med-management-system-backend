@@ -12,6 +12,8 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface EstabelecimentoMapper {
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "version", ignore = true)
     Estabelecimento toEntity(EstabelecimentoRequestDTO dto);
 
     EstabelecimentoResponseDTO toResponse(Estabelecimento entity);

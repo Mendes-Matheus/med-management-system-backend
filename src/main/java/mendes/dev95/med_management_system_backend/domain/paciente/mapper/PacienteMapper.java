@@ -16,6 +16,7 @@ public interface PacienteMapper {
 
     Paciente toEntity(PacienteRequestDTO dto);
 
+    @Mapping(target = "procedimentos", ignore = true)
     PacienteResponseDTO toResponse(Paciente entity);
 
     PacienteResponseWithProcedimentosDTO toDetailResponse(Paciente entity);
@@ -24,6 +25,7 @@ public interface PacienteMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "version", ignore = true)
+    @Mapping(target = "procedimentos", ignore = true)
     void entityFromDto(PacienteRequestDTO dto, @MappingTarget Paciente entity);
 }
 
