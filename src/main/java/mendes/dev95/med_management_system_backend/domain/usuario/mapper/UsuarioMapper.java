@@ -18,7 +18,6 @@ public interface UsuarioMapper {
     Usuario toEntity(UsuarioRegisterRequestDTO dto);
 
     // converte entidade em resposta
-    @Mapping(target = "authorities", ignore = true)
     UsuarioResponseDTO toResponse(Usuario entity);
 
     UsuarioResponseDTO toOptionalResponse(Optional<Usuario> entity);

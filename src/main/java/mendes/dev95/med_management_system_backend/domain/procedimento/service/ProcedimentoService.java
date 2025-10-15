@@ -3,7 +3,6 @@ package mendes.dev95.med_management_system_backend.domain.procedimento.service;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import mendes.dev95.med_management_system_backend.domain.estabelecimento.exception.EstabelecimentoNotFoundException;
 import mendes.dev95.med_management_system_backend.domain.estabelecimento.repository.EstabelecimentoRepository;
@@ -27,7 +26,6 @@ import java.util.UUID;
 
 @Service
 @Slf4j
-@Log4j2
 @RequiredArgsConstructor
 public class ProcedimentoService {
 

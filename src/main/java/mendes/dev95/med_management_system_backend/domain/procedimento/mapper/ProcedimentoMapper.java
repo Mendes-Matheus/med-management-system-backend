@@ -35,7 +35,6 @@ public interface ProcedimentoMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "version", ignore = true)
     @Mapping(target = "estabelecimentos", ignore = true)
-    @Mapping(target = "procedimentoPaciente", ignore = true)
     void updateEntityFromDto(ProcedimentoRequestDTO dto, @MappingTarget Procedimento entity);
 
 }

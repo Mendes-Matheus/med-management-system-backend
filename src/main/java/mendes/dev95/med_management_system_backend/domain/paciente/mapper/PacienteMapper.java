@@ -19,16 +19,15 @@ public interface PacienteMapper {
     @Mapping(target = "procedimentos", ignore = true)
     Paciente toEntity(PacienteRequestDTO dto);
 
-    @Mapping(target = "procedimentos", ignore = true)
     PacienteResponseDTO toResponse(Paciente entity);
 
+    @Mapping(target = "procedimentos", ignore = true)
     PacienteResponseWithProcedimentosDTO toDetailResponse(Paciente entity);
 
     List<PacienteResponseDTO> toResponseList(List<Paciente> entities);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "version", ignore = true)
-    @Mapping(target = "procedimentos", ignore = true)
     void entityFromDto(PacienteRequestDTO dto, @MappingTarget Paciente entity);
 }
 
