@@ -18,6 +18,7 @@ public interface UsuarioMapper {
     Usuario toEntity(UsuarioRegisterRequestDTO dto);
 
     // converte entidade em resposta
+    @Mapping(target = "authorities", ignore = true)
     UsuarioResponseDTO toResponse(Usuario entity);
 
     UsuarioResponseDTO toOptionalResponse(Optional<Usuario> entity);
@@ -30,7 +31,8 @@ public interface UsuarioMapper {
     // atualiza entidade existente a partir de um DTO (ignora id e version)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "version", ignore = true)
-    @Mapping(target = "password", ignore = true)
+    @Mapping(target = "username", ignore = true)
+    @Mapping(target = "email", ignore = true)
     void updateEntityFromDto(UsuarioUpdateRequestDTO dto, @MappingTarget Usuario entity);
 
 }

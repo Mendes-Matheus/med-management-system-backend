@@ -14,6 +14,9 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses = {ProcedimentoPacienteMapper.class})
 public interface PacienteMapper {
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "version", ignore = true)
+    @Mapping(target = "procedimentos", ignore = true)
     Paciente toEntity(PacienteRequestDTO dto);
 
     @Mapping(target = "procedimentos", ignore = true)
