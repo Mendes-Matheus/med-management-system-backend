@@ -15,14 +15,11 @@ import java.util.List;
 public interface ProcedimentoMapper {
 
     default Procedimento toEntity(ProcedimentoRequestDTO dto) {
-        var estabelecimento = new Estabelecimento();
-        estabelecimento.setId(dto.estabelecimentoId());
 
         return Procedimento.builder()
                 .nomeProcedimento(dto.nomeProcedimento())
                 .observacoes(dto.observacoes())
                 .orientacoes(dto.orientacoes())
-                .estabelecimento(estabelecimento)
                 .tipoProcedimento(dto.tipoProcedimento())
                 .build();
     }
@@ -33,7 +30,6 @@ public interface ProcedimentoMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "version", ignore = true)
-    @Mapping(target = "estabelecimento", ignore = true)
     void updateEntityFromDto(ProcedimentoRequestDTO dto, @MappingTarget Procedimento entity);
 
 }

@@ -56,5 +56,28 @@ public class ProcedimentoController {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/{id}/estabelecimentos/{estabelecimentoId}")
+    public ResponseEntity<ProcedimentoResponseDTO> associarEstabelecimento(
+            @PathVariable UUID id,
+            @PathVariable UUID estabelecimentoId
+    ) {
+        return ResponseEntity.ok(service.associarEstabelecimento(id, estabelecimentoId));
+    }
+
+    @DeleteMapping("/{id}/estabelecimentos/{estabelecimentoId}")
+    public ResponseEntity<ProcedimentoResponseDTO> removerEstabelecimento(
+            @PathVariable UUID id,
+            @PathVariable UUID estabelecimentoId
+    ) {
+        return ResponseEntity.ok(service.removerEstabelecimento(id, estabelecimentoId));
+    }
+
+    @GetMapping("/estabelecimento/{estabelecimentoId}")
+    public ResponseEntity<List<ProcedimentoResponseDTO>> findByEstabelecimento(
+            @PathVariable UUID estabelecimentoId
+    ) {
+        return ResponseEntity.ok(service.findByEstabelecimentoId(estabelecimentoId));
+    }
 }
 
