@@ -27,7 +27,6 @@ public interface ProcedimentoPacienteMapper {
         procedimentoId.setId(dto.procedimentoId());
 
         return ProcedimentoPaciente.builder()
-                .status(StatusProcedimento.valueOf(dto.status()))
                 .dataSolicitacao(dto.dataSolicitacao())
                 .dataAgendamento(dto.dataAgendamento())
                 .observacoes(dto.observacoes())
