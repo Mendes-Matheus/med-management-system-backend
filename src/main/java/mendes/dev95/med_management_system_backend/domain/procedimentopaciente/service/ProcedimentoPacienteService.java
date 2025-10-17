@@ -54,6 +54,8 @@ public class ProcedimentoPacienteService {
             throw new ProcedimentoAgendadoException();
         }
 
+        entity.setStatus(StatusProcedimento.PENDENTE);
+
         var procedimentoPacienteToSave = ProcedimentoPaciente.builder()
                 .status(entity.getStatus())
                 .dataSolicitacao(entity.getDataSolicitacao())
