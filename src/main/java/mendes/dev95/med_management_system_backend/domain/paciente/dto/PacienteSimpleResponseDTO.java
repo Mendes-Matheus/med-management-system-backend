@@ -4,16 +4,8 @@ import java.time.LocalDate;
 
 public record PacienteSimpleResponseDTO(
         String nome,
-        LocalDate dataNascimento,
         String cpf,
         String rg,
         String cns,
-        String telefone,
-        String telefoneSecundario,
-        String email,
-        String sexo,
-        String logradouro,
-        String numero,
-        String bairro,
-        String observacoes
+        String telefone
 ) {}

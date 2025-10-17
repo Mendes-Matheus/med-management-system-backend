@@ -7,7 +7,7 @@ import mendes.dev95.med_management_system_backend.domain.procedimento.exception.
 import mendes.dev95.med_management_system_backend.domain.procedimento.exception.ProcedimentoNotFoundException;
 import mendes.dev95.med_management_system_backend.domain.procedimento.repository.ProcedimentoRepository;
 import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPacienteRequestDTO;
-import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPacienteResponseDTO;
+import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPacienteSimpleResponseDTO;
 import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.entity.ProcedimentoPaciente;
 import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.entity.StatusProcedimento;
 import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.mapper.ProcedimentoPacienteMapper;
@@ -27,7 +27,7 @@ public class ProcedimentoPacienteService {
     private final PacienteRepository pacienteRepository;
     private final ProcedimentoPacienteMapper mapper;
 
-    public ProcedimentoPacienteResponseDTO save(ProcedimentoPacienteRequestDTO dto) {
+    public ProcedimentoPacienteSimpleResponseDTO save(ProcedimentoPacienteRequestDTO dto) {
         var entity = mapper.toEntity(dto);
 
         var paciente = pacienteRepository.findById(entity.getPaciente().getId())
@@ -60,7 +60,6 @@ public class ProcedimentoPacienteService {
                 .status(entity.getStatus())
                 .dataSolicitacao(entity.getDataSolicitacao())
                 .dataAgendamento(entity.getDataAgendamento())
-                .observacoes(entity.getObservacoes())
                 .paciente(paciente)
                 .procedimento(procedimento)
                 .build();
@@ -69,27 +68,27 @@ public class ProcedimentoPacienteService {
         return mapper.toResponse(saved);
     }
 
-    public List<ProcedimentoPacienteResponseDTO> findAll() {
+    public List<ProcedimentoPacienteSimpleResponseDTO> findAll() {
         return mapper.toResponseList(repository.findAll());
     }
 
-    public ProcedimentoPacienteResponseDTO findById(UUID id) {
+    public ProcedimentoPacienteSimpleResponseDTO findById(UUID id) {
         var entity = repository.findById(id)
                 .orElseThrow(() -> new ProcedimentoNotFoundException(id));
         return mapper.toResponse(entity);
     }
 
-    public ProcedimentoPacienteResponseDTO findByPacienteId(UUID pacienteId) {
+    public ProcedimentoPacienteSimpleResponseDTO findByPacienteId(UUID pacienteId) {
         var entity = repository.findByPacienteId(pacienteId);
         return mapper.toResponse(entity);
     }
 
-    public ProcedimentoPacienteResponseDTO findByProcedimentoId(UUID procedimentoId) {
+    public ProcedimentoPacienteSimpleResponseDTO findByProcedimentoId(UUID procedimentoId) {
         var entity = repository.findByProcedimentoId(procedimentoId);
         return mapper.toResponse(entity);
     }
 
-    public ProcedimentoPacienteResponseDTO update(UUID id, ProcedimentoPacienteRequestDTO dto) {
+    public ProcedimentoPacienteSimpleResponseDTO update(UUID id, ProcedimentoPacienteRequestDTO dto) {
         var procedimentoPaciente = repository.findById(id)
                 .orElseThrow(() -> new ProcedimentoNotFoundException(id));
 

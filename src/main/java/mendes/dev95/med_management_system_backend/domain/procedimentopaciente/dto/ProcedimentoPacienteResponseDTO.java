@@ -16,6 +16,5 @@ public record ProcedimentoPacienteResponseDTO (
         String observacoes,
         PacienteResponseDTO paciente,
         ProcedimentoResponseDTO procedimento
-
 ) {
 }

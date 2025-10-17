@@ -1,14 +1,13 @@
 package mendes.dev95.med_management_system_backend.domain.procedimentopaciente.mapper;
 
 import mendes.dev95.med_management_system_backend.domain.estabelecimento.dto.EstabelecimentoSimpleResponseDTO;
-import mendes.dev95.med_management_system_backend.domain.paciente.dto.PacienteResponseDTO;
+import mendes.dev95.med_management_system_backend.domain.paciente.dto.PacienteSimpleResponseDTO;
 import mendes.dev95.med_management_system_backend.domain.paciente.entity.Paciente;
-import mendes.dev95.med_management_system_backend.domain.procedimento.dto.ProcedimentoResponseDTO;
+import mendes.dev95.med_management_system_backend.domain.procedimento.dto.ProcedimentoSimpleResponseDTO;
 import mendes.dev95.med_management_system_backend.domain.procedimento.entity.Procedimento;
 import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPacienteRequestDTO;
-import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPacienteResponseDTO;
+import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPacienteSimpleResponseDTO;
 import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.entity.ProcedimentoPaciente;
-import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.entity.StatusProcedimento;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -36,46 +35,31 @@ public interface ProcedimentoPacienteMapper {
 
     }
 
-    default ProcedimentoPacienteResponseDTO toResponse(ProcedimentoPaciente ep){
+    default ProcedimentoPacienteSimpleResponseDTO toResponse(ProcedimentoPaciente ep){
         var paciente = ep.getPaciente();
-        var pacienteDTO = new PacienteResponseDTO(
-                paciente.getId(),
-                paciente.getVersion(),
+        var pacienteDTO = new PacienteSimpleResponseDTO(
                 paciente.getNome(),
-                paciente.getDataNascimento(),
                 paciente.getCpf(),
                 paciente.getRg(),
                 paciente.getCns(),
-                paciente.getNomePai(),
-                paciente.getNomeMae(),
-                paciente.getTelefone(),
-                paciente.getTelefoneSecundario(),
-                paciente.getSexo(),
-                paciente.getLogradouro(),
-                paciente.getNumero(),
-                paciente.getBairro(),
-                paciente.getObservacoes(),
-                paciente.getEmail()
+                paciente.getTelefone()
         );
 
         var consultaDTO = getProcedimentoResponseDTO(ep);
 
-        return new ProcedimentoPacienteResponseDTO(
+        return new ProcedimentoPacienteSimpleResponseDTO(
                 ep.getId(),
-                ep.getVersion(),
                 ep.getStatus().name(),
                 ep.getDataSolicitacao(),
                 ep.getDataAgendamento(),
-                ep.getObservacoes(),
                 pacienteDTO,
                 consultaDTO
         );
     }
 
-    private static ProcedimentoResponseDTO getProcedimentoResponseDTO(ProcedimentoPaciente ep){
+    private static ProcedimentoSimpleResponseDTO getProcedimentoResponseDTO(ProcedimentoPaciente ep){
         var procedimento = ep.getProcedimento();
 
-        // CORREÇÃO: Agora trabalhamos com lista de estabelecimentos
         List<EstabelecimentoSimpleResponseDTO> estabelecimentosDTO = null;
 
         if (procedimento.getEstabelecimentos() != null && !procedimento.getEstabelecimentos().isEmpty()) {
@@ -86,17 +70,15 @@ public interface ProcedimentoPacienteMapper {
                     .collect(Collectors.toList());
         }
 
-        return new ProcedimentoResponseDTO(
-                procedimento.getId(),
-                procedimento.getVersion(),
+        return new ProcedimentoSimpleResponseDTO(
                 procedimento.getNomeProcedimento(),
-                procedimento.getTipoProcedimento(),
                 procedimento.getObservacoes(),
                 procedimento.getOrientacoes(),
                 estabelecimentosDTO
         );
     }
-    default List<ProcedimentoPacienteResponseDTO> toResponseList(List<ProcedimentoPaciente> entities){
+
+    default List<ProcedimentoPacienteSimpleResponseDTO> toResponseList(List<ProcedimentoPaciente> entities){
         return entities.stream()
                 .map(this::toResponse)
                 .toList();
