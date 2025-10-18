@@ -71,6 +71,7 @@ public interface ProcedimentoPacienteMapper {
         }
 
         return new ProcedimentoSimpleResponseDTO(
+                procedimento.getId(),
                 procedimento.getNomeProcedimento(),
                 procedimento.getObservacoes(),
                 procedimento.getOrientacoes(),
