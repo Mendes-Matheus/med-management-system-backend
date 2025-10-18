@@ -8,6 +8,7 @@ import mendes.dev95.med_management_system_backend.domain.procedimento.exception.
 import mendes.dev95.med_management_system_backend.domain.procedimento.repository.ProcedimentoRepository;
 import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPacienteRequestDTO;
 import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPacienteSimpleResponseDTO;
+import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPacienteUpdateDTO;
 import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.entity.ProcedimentoPaciente;
 import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.entity.StatusProcedimento;
 import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.mapper.ProcedimentoPacienteMapper;
@@ -88,22 +89,32 @@ public class ProcedimentoPacienteService {
         return mapper.toResponse(entity);
     }
 
-    public ProcedimentoPacienteSimpleResponseDTO update(UUID id, ProcedimentoPacienteRequestDTO dto) {
+    public ProcedimentoPacienteSimpleResponseDTO update(UUID id, ProcedimentoPacienteUpdateDTO dto) {
         var procedimentoPaciente = repository.findById(id)
                 .orElseThrow(() -> new ProcedimentoNotFoundException(id));
 
         mapper.updateEntityFromDto(dto, procedimentoPaciente);
 
-        if (dto.pacienteId() != null) {
-            var paciente = pacienteRepository.findById(dto.pacienteId())
-                    .orElseThrow(() -> new PacienteNotFoundException(dto.pacienteId()));
-            procedimentoPaciente.setPaciente(paciente);
-        }
-
         if (dto.procedimentoId() != null) {
             var procedimento = procedimentoRepository.findById(dto.procedimentoId())
                     .orElseThrow(() -> new ProcedimentoNotFoundException(dto.procedimentoId()));
             procedimentoPaciente.setProcedimento(procedimento);
+        }
+
+        if (dto.dataSolicitacao() != null) {
+            procedimentoPaciente.setDataSolicitacao(dto.dataSolicitacao());
+        }
+
+        if (dto.dataAgendamento() != null) {
+            procedimentoPaciente.setDataAgendamento(dto.dataAgendamento());
+        }
+
+        if (dto.statusProcedimento() != null) {
+            procedimentoPaciente.setStatus(dto.statusProcedimento());
+        }
+
+        if (dto.observacoes() != null) {
+            procedimentoPaciente.setObservacoes(dto.observacoes());
         }
 
         var updated = repository.save(procedimentoPaciente);

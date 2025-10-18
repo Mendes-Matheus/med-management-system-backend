@@ -7,6 +7,7 @@ import mendes.dev95.med_management_system_backend.domain.procedimento.dto.Proced
 import mendes.dev95.med_management_system_backend.domain.procedimento.entity.Procedimento;
 import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPacienteRequestDTO;
 import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPacienteSimpleResponseDTO;
+import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPacienteUpdateDTO;
 import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.entity.ProcedimentoPaciente;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -27,7 +28,6 @@ public interface ProcedimentoPacienteMapper {
 
         return ProcedimentoPaciente.builder()
                 .dataSolicitacao(dto.dataSolicitacao())
-                .dataAgendamento(dto.dataAgendamento())
                 .observacoes(dto.observacoes())
                 .paciente(pacienteId)
                 .procedimento(procedimentoId)
@@ -86,8 +86,7 @@ public interface ProcedimentoPacienteMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "version", ignore = true)
-    @Mapping(target = "paciente", ignore = true)
     @Mapping(target = "procedimento", ignore = true)
-    void updateEntityFromDto(ProcedimentoPacienteRequestDTO dto, @MappingTarget ProcedimentoPaciente entity);
+    void updateEntityFromDto(ProcedimentoPacienteUpdateDTO dto, @MappingTarget ProcedimentoPaciente entity);
 
 }

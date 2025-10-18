@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPacienteRequestDTO;
 import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPacienteSimpleResponseDTO;
+import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPacienteUpdateDTO;
 import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.service.ProcedimentoPacienteService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -55,7 +56,7 @@ public class ProcedimentoPacienteController {
     @PutMapping("/{id}")
     public ResponseEntity<ProcedimentoPacienteSimpleResponseDTO> update(
             @PathVariable UUID id,
-            @RequestBody @Valid ProcedimentoPacienteRequestDTO request
+            @RequestBody @Valid ProcedimentoPacienteUpdateDTO request
     ) {
         return ResponseEntity.ok(service.update(id, request));
     }
