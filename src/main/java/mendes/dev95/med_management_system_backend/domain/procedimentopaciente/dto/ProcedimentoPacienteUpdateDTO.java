@@ -12,7 +12,6 @@ public record ProcedimentoPacienteUpdateDTO(
         @NotNull(message = "{procedimento.paciente.request.dataSolicitacao.notnull}")
         LocalDate dataSolicitacao,
 
-        @NotNull(message = "{procedimento.paciente.request.dataAgendamento.notnull}")
         LocalDate dataAgendamento,
 
         StatusProcedimento statusProcedimento,
