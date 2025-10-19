@@ -39,7 +39,7 @@ public class SecurityFilter extends OncePerRequestFilter {
 
         String token = recoverToken(request);
 
-        // Caminho público -> skip
+        // Caminho público - skip
         if (isPublicEndpoint(request)) {
             filterChain.doFilter(request, response);
             return;
@@ -67,7 +67,7 @@ public class SecurityFilter extends OncePerRequestFilter {
             return;
         }
 
-        // ✅ SEMPRE usar authorities do token (elimina consulta ao banco)
+        // Usa authorities do token (elimina consulta ao banco)
         List<String> authoritiesClaim = decoded.getClaim("authorities").asList(String.class);
 
         if (authoritiesClaim != null && !authoritiesClaim.isEmpty()) {
@@ -79,7 +79,7 @@ public class SecurityFilter extends OncePerRequestFilter {
                     subject, null, authorities);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } else {
-            // ✅ Se não houver authorities no token, tratar como sem permissões
+            // Se não houver authorities no token, tratar como sem permissões
             log.warn("Token sem authorities para usuário: {}", subject);
             Collection<GrantedAuthority> authorities = Collections.emptyList();
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
