@@ -6,8 +6,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import mendes.dev95.med_management_system_backend.domain.usuario.entity.Usuario;
-import mendes.dev95.med_management_system_backend.domain.usuario.repository.UsuarioRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
@@ -24,15 +23,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
+@Slf4j
 @RequiredArgsConstructor
 public class SecurityFilter extends OncePerRequestFilter {
 
     @Autowired
     private TokenService tokenService;
-    @Autowired
-    private final UsuarioRepository userRepository;
 
-    private static final int MAX_TOKEN_LENGTH = 4096; // proteção simples
+    private static final int MAX_TOKEN_LENGTH = 4096;
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
@@ -41,7 +39,7 @@ public class SecurityFilter extends OncePerRequestFilter {
 
         String token = recoverToken(request);
 
-        // caminho público -> skip (ex: login, health, docs)
+        // Caminho público -> skip
         if (isPublicEndpoint(request)) {
             filterChain.doFilter(request, response);
             return;
@@ -69,28 +67,23 @@ public class SecurityFilter extends OncePerRequestFilter {
             return;
         }
 
-        // tenta extrair authorities do token
+        // ✅ SEMPRE usar authorities do token (elimina consulta ao banco)
         List<String> authoritiesClaim = decoded.getClaim("authorities").asList(String.class);
 
-        Collection<GrantedAuthority> authorities = Collections.emptyList();
         if (authoritiesClaim != null && !authoritiesClaim.isEmpty()) {
-            authorities = authoritiesClaim.stream()
+            Collection<GrantedAuthority> authorities = authoritiesClaim.stream()
                     .map(SimpleGrantedAuthority::new)
                     .collect(Collectors.toList());
+
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                     subject, null, authorities);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         } else {
-            // fallback: buscar no DB (menos performático)
-            var usuarioOpt = userRepository.findByEmail(subject);
-            if (usuarioOpt.isEmpty()) {
-                // para segurança, responda 401 (não revelar se email existe)
-                unauthorized(response, "user.notfound");
-                return;
-            }
-            Usuario usuario = usuarioOpt.get();
+            // ✅ Se não houver authorities no token, tratar como sem permissões
+            log.warn("Token sem authorities para usuário: {}", subject);
+            Collection<GrantedAuthority> authorities = Collections.emptyList();
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                    usuario, null, usuario.getAuthorities());
+                    subject, null, authorities);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
 
