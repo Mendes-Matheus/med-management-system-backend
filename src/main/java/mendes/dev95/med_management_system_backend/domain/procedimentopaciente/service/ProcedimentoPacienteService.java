@@ -7,6 +7,7 @@ import mendes.dev95.med_management_system_backend.domain.procedimento.exception.
 import mendes.dev95.med_management_system_backend.domain.procedimento.exception.ProcedimentoNotFoundException;
 import mendes.dev95.med_management_system_backend.domain.procedimento.repository.ProcedimentoRepository;
 import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPacienteRequestDTO;
+import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPacienteResponseDTO;
 import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPacienteSimpleResponseDTO;
 import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPacienteUpdateDTO;
 import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.entity.ProcedimentoPaciente;
@@ -66,27 +67,27 @@ public class ProcedimentoPacienteService {
                 .build();
 
         var saved = repository.save(procedimentoPacienteToSave);
-        return mapper.toResponse(saved);
+        return mapper.toSimpleResponse(saved);
     }
 
     public List<ProcedimentoPacienteSimpleResponseDTO> findAll() {
-        return mapper.toResponseList(repository.findAll());
+        return mapper.toSimpleResponseList(repository.findAll());
     }
 
-    public ProcedimentoPacienteSimpleResponseDTO findById(UUID id) {
+    public ProcedimentoPacienteResponseDTO findById(UUID id) {
         var entity = repository.findById(id)
                 .orElseThrow(() -> new ProcedimentoNotFoundException(id));
-        return mapper.toResponse(entity);
+        return mapper.toFullResponse(entity);
     }
 
     public ProcedimentoPacienteSimpleResponseDTO findByPacienteId(UUID pacienteId) {
         var entity = repository.findByPacienteId(pacienteId);
-        return mapper.toResponse(entity);
+        return mapper.toSimpleResponse(entity);
     }
 
     public ProcedimentoPacienteSimpleResponseDTO findByProcedimentoId(UUID procedimentoId) {
         var entity = repository.findByProcedimentoId(procedimentoId);
-        return mapper.toResponse(entity);
+        return mapper.toSimpleResponse(entity);
     }
 
     public ProcedimentoPacienteSimpleResponseDTO update(UUID id, ProcedimentoPacienteUpdateDTO dto) {
@@ -118,7 +119,7 @@ public class ProcedimentoPacienteService {
         }
 
         var updated = repository.save(procedimentoPaciente);
-        return mapper.toResponse(updated);
+        return mapper.toSimpleResponse(updated);
     }
 
     public void delete(UUID id) {

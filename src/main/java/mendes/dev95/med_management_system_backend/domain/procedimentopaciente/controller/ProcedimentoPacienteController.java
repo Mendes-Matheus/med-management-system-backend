@@ -3,6 +3,7 @@ package mendes.dev95.med_management_system_backend.domain.procedimentopaciente.c
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPacienteRequestDTO;
+import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPacienteResponseDTO;
 import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPacienteSimpleResponseDTO;
 import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPacienteUpdateDTO;
 import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.service.ProcedimentoPacienteService;
@@ -39,7 +40,7 @@ public class ProcedimentoPacienteController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProcedimentoPacienteSimpleResponseDTO> findById(@PathVariable UUID id) {
+    public ResponseEntity<ProcedimentoPacienteResponseDTO> findById(@PathVariable UUID id) {
         return ResponseEntity.ok(service.findById(id));
     }
 
