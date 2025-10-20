@@ -69,8 +69,6 @@ public record PacienteRequestDTO(
         @Size(max = 1000, message = "{paciente.observacoes.size}")
         String observacoes,
 
-        @NotBlank(message = "{paciente.email.notblank}")
-        @NotNull(message = "{paciente.email.notnull}")
         @Email(message = "{paciente.email.email}")
         String email
 ) {}
