@@ -72,9 +72,9 @@ public class SecurityFilter extends OncePerRequestFilter {
 
         if (authoritiesClaim != null && !authoritiesClaim.isEmpty()) {
             Collection<GrantedAuthority> authorities = authoritiesClaim.stream()
-                    .map(SimpleGrantedAuthority::new)
+                    .map(role -> new SimpleGrantedAuthority(role.startsWith("ROLE_") ? role : "ROLE_" + role))
                     .collect(Collectors.toList());
-
+            log.debug("Usuário {} com authorities: {}", subject, authorities);
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                     subject, null, authorities);
             SecurityContextHolder.getContext().setAuthentication(authentication);
