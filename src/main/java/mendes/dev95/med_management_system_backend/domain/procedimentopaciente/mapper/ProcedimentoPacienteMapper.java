@@ -86,7 +86,6 @@ public interface ProcedimentoPacienteMapper {
 
         return new ProcedimentoPacienteResponseDTO(
                 entity.getId(),
-                entity.getVersion(),
                 entity.getStatus() != null ? entity.getStatus().name() : null,
                 entity.getDataSolicitacao(),
                 entity.getDataAgendamento(),
@@ -105,7 +104,6 @@ public interface ProcedimentoPacienteMapper {
 
         return new PacienteResponseDTO(
                 paciente.getId(),
-                paciente.getVersion(),
                 paciente.getNome(),
                 paciente.getDataNascimento(),
                 paciente.getCpf(),
@@ -153,7 +151,6 @@ public interface ProcedimentoPacienteMapper {
 
         return new ProcedimentoResponseDTO(
                 procedimento.getId(),
-                procedimento.getVersion(),
                 procedimento.getNomeProcedimento(),
                 procedimento.getTipoProcedimento(),
                 procedimento.getOrientacoes(),
