@@ -107,7 +107,7 @@ public class AuthService {
 
             Instant refreshExp = tokenService.getExpiration(refreshToken).toInstant();
 
-            refreshTokenService.create(usuario.getEmail(), refreshToken, refreshExp);
+            refreshTokenService.create(usuario.getUsername(), refreshToken, refreshExp);
 
             return new UsuarioAuthResponseDTO(
                     usuario.getId(),
@@ -151,8 +151,8 @@ public class AuthService {
     }
 
     public UsuarioAuthResponseDTO generateTokens(String username) {
-        var usuario = repository.findByEmail(username)
-                .orElseThrow(() -> new InvalidCredentialsException(getMessage("usuario.invalidemailorpassword")));
+        var usuario = repository.findByUsername(username)
+                .orElseThrow(() -> new InvalidCredentialsException(getMessage("usuario.invalidusernameorpassword")));
         return createAuthResponse(usuario);
     }
 
