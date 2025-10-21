@@ -36,28 +36,28 @@ public class AuthService {
     private final RefreshTokenService refreshTokenService;
 
     public UsuarioAuthResponseDTO login(UsuarioLoginRequestDTO request) {
-        String maskedEmail = MaskUtil.maskEmail(request.email());
-        log.debug("Tentando autenticar usuário: {}", maskedEmail);
+        String username = request.username();
+        log.debug("Tentando autenticar usuário: {}", username);
 
-        var usuario = repository.findByEmail(request.email())
+        var usuario = repository.findByUsername(request.username())
                 .orElseThrow(() -> {
-                    log.warn("Tentativa de login com e-mail inexistente: {}", maskedEmail);
-                    return new InvalidCredentialsException(getMessage("usuario.invalidemailorpassword"));
+                    log.warn("Tentativa de login com e-mail inexistente: {}", username);
+                    return new InvalidCredentialsException(getMessage("usuario.invalidusernameorpassword"));
                 });
 
         if (!passwordEncoder.matches(request.password(), usuario.getPassword())) {
-            log.warn("Senha inválida para e-mail: {}", maskedEmail);
-            throw new InvalidCredentialsException(getMessage("usuario.invalidemailorpassword"));
+            log.warn("Senha inválida para e-mail: {}", username);
+            throw new InvalidCredentialsException(getMessage("usuario.invalidusernameorpassword"));
         }
 
-        log.info("Usuário autenticado com sucesso: {}", maskedEmail);
+        log.info("Usuário autenticado com sucesso: {}", username);
         return createAuthResponse(usuario);
     }
 
     @Transactional
     public UsuarioAuthResponseDTO register(UsuarioRegisterRequestDTO request) {
-        String maskedEmail = MaskUtil.maskEmail(request.email());
-        log.debug("Tentando registrar usuário: {}", maskedEmail);
+        String username = request.username();
+        log.debug("Tentando registrar usuário: {}", username);
 
         try {
             ensureUniqueUser(request.email(), request.cpf(), request.username());
@@ -66,17 +66,17 @@ public class AuthService {
             usuario.setPassword(passwordEncoder.encode(request.password()));
 
             var saved = repository.save(usuario);
-            log.info("Usuário registrado com sucesso: {}", maskedEmail);
+            log.info("Usuário registrado com sucesso: {}", username);
 
             return createAuthResponse(saved);
 
         } catch (UsuarioAlreadyExistsException ex) {
             throw ex;
         } catch (DataIntegrityViolationException ex) {
-            log.error("Violação de integridade ao registrar usuário: {}", maskedEmail, ex);
+            log.error("Violação de integridade ao registrar usuário: {}", username, ex);
             throw new UsuarioAlreadyExistsException(getMessage("usuario.registration.conflict"), ex);
         } catch (Exception ex) {
-            log.error("Erro inesperado no registro de usuário: {}", maskedEmail, ex);
+            log.error("Erro inesperado no registro de usuário: {}", username, ex);
             throw new UsuarioRegistrationException(getMessage("usuario.registration.error"), ex);
         }
     }

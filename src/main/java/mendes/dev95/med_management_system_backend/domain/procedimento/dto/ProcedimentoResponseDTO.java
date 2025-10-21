@@ -8,7 +8,6 @@ import java.util.UUID;
 
 public record ProcedimentoResponseDTO (
         UUID id,
-        Long version,
         String nomeProcedimento,
         TipoProcedimento tipoProcedimento,
         String orientacoes,

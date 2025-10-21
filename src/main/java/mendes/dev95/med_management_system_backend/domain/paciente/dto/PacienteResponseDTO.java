@@ -5,7 +5,6 @@ import java.util.UUID;
 
 public record PacienteResponseDTO(
         UUID id,
-        Long version,
         String nome,
         LocalDate dataNascimento,
         String cpf,

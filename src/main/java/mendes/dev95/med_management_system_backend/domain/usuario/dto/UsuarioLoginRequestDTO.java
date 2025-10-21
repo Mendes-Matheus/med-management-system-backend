@@ -6,10 +6,9 @@ import jakarta.validation.constraints.*;
 
 public record UsuarioLoginRequestDTO(
 
-        //@Schema(description = "E-mail do usuário", example = "usuario@email.com")
-        @NotBlank(message = "O e-mail é obrigatório")
-        @Email(message = "Formato de e-mail inválido")
-        String email,
+        //@Schema(description = "username do usuário", example = "joao.silva")
+        @NotBlank(message = "O username é obrigatório")
+        String username,
 
         //@Schema(description = "Senha do usuário", example = "123456")
         @NotBlank(message = "A senha é obrigatória")

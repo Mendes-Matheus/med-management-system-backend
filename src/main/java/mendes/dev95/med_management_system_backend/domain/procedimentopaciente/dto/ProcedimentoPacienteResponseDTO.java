@@ -9,7 +9,6 @@ import java.util.UUID;
 public record ProcedimentoPacienteResponseDTO (
 
         UUID id,
-        Long version,
         String status,
         LocalDate dataSolicitacao,
         LocalDate dataAgendamento,

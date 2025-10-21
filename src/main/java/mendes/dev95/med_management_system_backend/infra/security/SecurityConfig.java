@@ -10,6 +10,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -25,6 +26,7 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -46,21 +48,39 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/auth/users").hasRole("ADMINISTRADOR")
                         .requestMatchers(HttpMethod.GET, "/auth/users").hasRole("ADMINISTRADOR")
+
+                        .requestMatchers(HttpMethod.GET, "/estabelecimentos").hasAnyRole("ADMINISTRADOR", "ASSISTENTE_ADMINISTRATIVO")
                         .requestMatchers(HttpMethod.POST, "/estabelecimentos").hasRole("ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.PUT, "/estabelecimentos").hasRole("ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.DELETE, "/estabelecimentos").hasRole("ADMINISTRADOR")
+
+                        .requestMatchers(HttpMethod.GET, "/procedimentos").hasAnyRole("ADMINISTRADOR", "ASSISTENTE_ADMINISTRATIVO")
                         .requestMatchers(HttpMethod.POST, "/procedimentos").hasRole("ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.PUT, "/procedimentos").hasRole("ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.DELETE, "/procedimentos").hasRole("ADMINISTRADOR")
+
+                        .requestMatchers(HttpMethod.GET, "/pacientes").hasAnyRole("ADMINISTRADOR", "ASSISTENTE_ADMINISTRATIVO")
+                        .requestMatchers(HttpMethod.POST, "/pacientes").hasAnyRole("ADMINISTRADOR", "ASSISTENTE_ADMINISTRATIVO")
+                        .requestMatchers(HttpMethod.PUT, "/pacientes").hasAnyRole("ADMINISTRADOR", "ASSISTENTE_ADMINISTRATIVO")
+                        .requestMatchers(HttpMethod.DELETE, "/pacientes").hasAnyRole("ADMINISTRADOR", "ASSISTENTE_ADMINISTRATIVO")
+
+                        .requestMatchers(HttpMethod.GET, "/procedimentos-paciente").hasAnyRole("ADMINISTRADOR", "ASSISTENTE_ADMINISTRATIVO")
+                        .requestMatchers(HttpMethod.POST, "/procedimentos-paciente").hasAnyRole("ADMINISTRADOR", "ASSISTENTE_ADMINISTRATIVO")
+                        .requestMatchers(HttpMethod.PUT, "/procedimentos-paciente").hasAnyRole("ADMINISTRADOR", "ASSISTENTE_ADMINISTRATIVO")
+                        .requestMatchers(HttpMethod.DELETE, "/procedimentos-paciente").hasAnyRole("ADMINISTRADOR", "ASSISTENTE_ADMINISTRATIVO")
+
                         .requestMatchers("/actuator/health", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .anyRequest().authenticated()
-                )
-                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
+                );
 
-        // JWT filter antes do UsernamePasswordAuthenticationFilter
+        http.addFilterBefore(simpleRateLimitingFilter, UsernamePasswordAuthenticationFilter.class);
         http.addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
-
-        // LoggingContextFilter depois do SecurityFilter (para que o SecurityContext já esteja preenchido)
+        http.addFilterAfter(loggingContextFilter, SecurityFilter.class);
+        http.addFilterBefore(simpleRateLimitingFilter, SecurityFilter.class);
         http.addFilterAfter(loggingContextFilter, SecurityFilter.class);
 
-        http.addFilterBefore(simpleRateLimitingFilter, SecurityFilter.class);
 
         // Forçar HTTPS em produção: usa propriedade "api.security.require-https"
         boolean requireHttps = Boolean.parseBoolean(env.getProperty("api.security.require-https", "false"));
