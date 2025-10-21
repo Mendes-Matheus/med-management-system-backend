@@ -74,8 +74,9 @@ public class TokenService {
 
             return JWT.create()
                     .withIssuer(issuer)
-                    .withSubject(usuario.getEmail())
+                    .withSubject(usuario.getUsername())
                     .withClaim("id", usuario.getId().toString())
+                    .withClaim("email", usuario.getEmail())
                     .withClaim("authorities", authorities)
                     .withClaim("type", type)
                     .withJWTId(UUID.randomUUID().toString()) // gera o JTI
