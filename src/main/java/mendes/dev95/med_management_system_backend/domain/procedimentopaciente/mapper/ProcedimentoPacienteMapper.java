@@ -134,6 +134,7 @@ public interface ProcedimentoPacienteMapper {
         return new ProcedimentoSimpleResponseDTO(
                 procedimento.getId(),
                 procedimento.getNomeProcedimento(),
+                procedimento.getTipoProcedimento(),
                 procedimento.getObservacoes(),
                 procedimento.getOrientacoes(),
                 estabelecimentos
