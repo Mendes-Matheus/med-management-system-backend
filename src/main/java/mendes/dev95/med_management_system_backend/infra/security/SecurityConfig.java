@@ -50,26 +50,42 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/auth/users").hasRole("ADMINISTRADOR")
                         .requestMatchers(HttpMethod.GET, "/auth/users").hasRole("ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.PUT, "/usuarios").hasRole("ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.GET, "/usuarios").hasRole("ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.GET, "/usuarios/id/{id}").hasRole("ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.GET, "/usuarios").hasRole("ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.GET, "/usuarios/email/{email}").hasRole("ADMINISTRADOR")
 
                         .requestMatchers(HttpMethod.GET, "/estabelecimentos").hasAnyRole("ADMINISTRADOR", "ASSISTENTE_ADMINISTRATIVO")
-                        .requestMatchers(HttpMethod.POST, "/estabelecimentos").hasRole("ADMINISTRADOR")
-                        .requestMatchers(HttpMethod.PUT, "/estabelecimentos").hasRole("ADMINISTRADOR")
-                        .requestMatchers(HttpMethod.DELETE, "/estabelecimentos").hasRole("ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.GET, "/estabelecimentos/{id}").hasAnyRole("ADMINISTRADOR", "ASSISTENTE_ADMINISTRATIVO")
+                        .requestMatchers(HttpMethod.POST, "/estabelecimentos").hasAnyRole("ADMINISTRADOR", "ASSISTENTE_ADMINISTRATIVO")
+                        .requestMatchers(HttpMethod.PUT, "/estabelecimentos/{id}").hasAnyRole("ADMINISTRADOR", "ASSISTENTE_ADMINISTRATIVO")
+                        .requestMatchers(HttpMethod.DELETE, "/estabelecimentos/{id}").hasRole("ADMINISTRADOR")
 
                         .requestMatchers(HttpMethod.GET, "/procedimentos").hasAnyRole("ADMINISTRADOR", "ASSISTENTE_ADMINISTRATIVO")
-                        .requestMatchers(HttpMethod.POST, "/procedimentos").hasRole("ADMINISTRADOR")
-                        .requestMatchers(HttpMethod.PUT, "/procedimentos/{id}").hasRole("ADMINISTRADOR")
-                        .requestMatchers(HttpMethod.DELETE, "/procedimentos").hasRole("ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.GET, "/procedimentos/estabelecimento/{estabelecimentoId}").hasAnyRole("ADMINISTRADOR", "ASSISTENTE_ADMINISTRATIVO")
+                        .requestMatchers(HttpMethod.POST, "/procedimentos").hasAnyRole("ADMINISTRADOR", "ASSISTENTE_ADMINISTRATIVO")
+                        .requestMatchers(HttpMethod.POST, "/procedimentos/{id}/estabelecimentos/{estabelecimentoId}").hasAnyRole("ADMINISTRADOR", "ASSISTENTE_ADMINISTRATIVO")
+                        .requestMatchers(HttpMethod.PUT, "/procedimentos/{id}").hasAnyRole("ADMINISTRADOR", "ASSISTENTE_ADMINISTRATIVO")
+                        .requestMatchers(HttpMethod.DELETE, "/procedimentos/{id}").hasRole("ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.DELETE, "/procedimentos/{id}/estabelecimentos/{estabelecimentoId}").hasRole("ADMINISTRADOR")
 
                         .requestMatchers(HttpMethod.GET, "/pacientes").hasAnyRole("ADMINISTRADOR", "ASSISTENTE_ADMINISTRATIVO")
+                        .requestMatchers(HttpMethod.GET, "/pacientes/nome/{nome}").hasAnyRole("ADMINISTRADOR", "ASSISTENTE_ADMINISTRATIVO")
+                        .requestMatchers(HttpMethod.GET, "/pacientes/{id}").hasAnyRole("ADMINISTRADOR", "ASSISTENTE_ADMINISTRATIVO")
+                        .requestMatchers(HttpMethod.GET, "/pacientes/cpf/{cpf}").hasAnyRole("ADMINISTRADOR", "ASSISTENTE_ADMINISTRATIVO")
+                        .requestMatchers(HttpMethod.GET, "/pacientes/procedimentos/{id}").hasAnyRole("ADMINISTRADOR", "ASSISTENTE_ADMINISTRATIVO")
                         .requestMatchers(HttpMethod.POST, "/pacientes").hasAnyRole("ADMINISTRADOR", "ASSISTENTE_ADMINISTRATIVO")
-                        .requestMatchers(HttpMethod.PUT, "/pacientes").hasAnyRole("ADMINISTRADOR", "ASSISTENTE_ADMINISTRATIVO")
-                        .requestMatchers(HttpMethod.DELETE, "/pacientes").hasAnyRole("ADMINISTRADOR", "ASSISTENTE_ADMINISTRATIVO")
+                        .requestMatchers(HttpMethod.PUT, "/pacientes/{id}").hasAnyRole("ADMINISTRADOR", "ASSISTENTE_ADMINISTRATIVO")
+                        .requestMatchers(HttpMethod.DELETE, "/pacientes/{id}").hasRole("ADMINISTRADOR")
 
                         .requestMatchers(HttpMethod.GET, "/procedimentos-paciente").hasAnyRole("ADMINISTRADOR", "ASSISTENTE_ADMINISTRATIVO")
+                        .requestMatchers(HttpMethod.GET, "/procedimentos-paciente/{id}").hasAnyRole("ADMINISTRADOR", "ASSISTENTE_ADMINISTRATIVO")
+                        .requestMatchers(HttpMethod.GET, "/procedimentos-paciente/paciente/{id}").hasAnyRole("ADMINISTRADOR", "ASSISTENTE_ADMINISTRATIVO")
+                        .requestMatchers(HttpMethod.GET, "/procedimentos-paciente/procedimento/{id}").hasAnyRole("ADMINISTRADOR", "ASSISTENTE_ADMINISTRATIVO")
                         .requestMatchers(HttpMethod.POST, "/procedimentos-paciente").hasAnyRole("ADMINISTRADOR", "ASSISTENTE_ADMINISTRATIVO")
-                        .requestMatchers(HttpMethod.PUT, "/procedimentos-paciente").hasAnyRole("ADMINISTRADOR", "ASSISTENTE_ADMINISTRATIVO")
-                        .requestMatchers(HttpMethod.DELETE, "/procedimentos-paciente").hasAnyRole("ADMINISTRADOR", "ASSISTENTE_ADMINISTRATIVO")
+                        .requestMatchers(HttpMethod.PUT, "/procedimentos-paciente/{id}").hasAnyRole("ADMINISTRADOR", "ASSISTENTE_ADMINISTRATIVO")
+                        .requestMatchers(HttpMethod.DELETE, "/procedimentos-paciente/{id}").hasRole("ADMINISTRADOR")
 
                         .requestMatchers("/actuator/health", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .anyRequest().authenticated()
@@ -80,7 +96,6 @@ public class SecurityConfig {
         http.addFilterAfter(loggingContextFilter, SecurityFilter.class);
         http.addFilterBefore(simpleRateLimitingFilter, SecurityFilter.class);
         http.addFilterAfter(loggingContextFilter, SecurityFilter.class);
-
 
         // Forçar HTTPS em produção: usa propriedade "api.security.require-https"
         boolean requireHttps = Boolean.parseBoolean(env.getProperty("api.security.require-https", "false"));
