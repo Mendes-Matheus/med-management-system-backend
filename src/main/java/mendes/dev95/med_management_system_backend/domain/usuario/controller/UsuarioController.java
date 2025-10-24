@@ -40,7 +40,7 @@ public class UsuarioController {
     @PutMapping("/{id}")
     public ResponseEntity<UsuarioResponseDTO> update(
             @PathVariable UUID id,
-            @Valid @RequestBody UsuarioRegisterRequestDTO request
+            @Valid @RequestBody UsuarioUpdateRequestDTO request
     ) {
         UsuarioResponseDTO response = usuarioService.update(id, request);
         return ResponseEntity.ok(response);

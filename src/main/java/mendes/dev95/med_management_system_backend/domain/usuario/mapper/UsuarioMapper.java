@@ -27,11 +27,6 @@ public interface UsuarioMapper {
     // converte lista de entidades em lista de respostas
     List<UsuarioResponseDTO> toResponseList(List<Usuario> entities);
 
-    // atualiza entidade existente a partir de um DTO (ignora id e version)
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "version", ignore = true)
-    @Mapping(target = "username", ignore = true)
-    @Mapping(target = "email", ignore = true)
-    void updateEntityFromDto(UsuarioRegisterRequestDTO dto, @MappingTarget Usuario entity);
+    void updateEntityFromDto(UsuarioUpdateRequestDTO dto, @MappingTarget Usuario entity);
 
 }

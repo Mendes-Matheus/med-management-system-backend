@@ -74,7 +74,7 @@ public class UsuarioService {
     }
 
     @Transactional
-    public UsuarioResponseDTO update(UUID id, UsuarioRegisterRequestDTO request) {
+    public UsuarioResponseDTO update(UUID id, UsuarioUpdateRequestDTO request) {
         log.debug("Attempting to update user with id: {}", id);
 
         try {
@@ -98,7 +98,7 @@ public class UsuarioService {
         }
     }
 
-    private void updateExistingUser(Usuario existingUser, UsuarioRegisterRequestDTO request) {
+    private void updateExistingUser(Usuario existingUser, UsuarioUpdateRequestDTO request) {
         log.debug("Updating existing user: {}", request.email());
         mapper.updateEntityFromDto(request, existingUser);
 
