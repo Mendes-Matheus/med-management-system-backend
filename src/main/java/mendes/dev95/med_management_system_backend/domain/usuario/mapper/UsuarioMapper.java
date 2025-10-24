@@ -3,6 +3,7 @@ package mendes.dev95.med_management_system_backend.domain.usuario.mapper;
 import mendes.dev95.med_management_system_backend.domain.usuario.dto.UsuarioRegisterRequestDTO;
 import mendes.dev95.med_management_system_backend.domain.usuario.dto.UsuarioResponseDTO;
 import mendes.dev95.med_management_system_backend.domain.usuario.dto.UsuarioUpdateRequestDTO;
+import mendes.dev95.med_management_system_backend.domain.usuario.dto.UsuarioUpdateResponseDTO;
 import mendes.dev95.med_management_system_backend.domain.usuario.entity.Usuario;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -19,6 +20,8 @@ public interface UsuarioMapper {
 
     // converte entidade em resposta
     UsuarioResponseDTO toResponse(Usuario entity);
+
+    UsuarioUpdateResponseDTO toUpdateResponse(Usuario entity);
 
     UsuarioResponseDTO toOptionalResponse(Optional<Usuario> entity);
 

@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import mendes.dev95.med_management_system_backend.domain.usuario.dto.UsuarioRegisterRequestDTO;
 import mendes.dev95.med_management_system_backend.domain.usuario.dto.UsuarioResponseDTO;
 import mendes.dev95.med_management_system_backend.domain.usuario.dto.UsuarioUpdateRequestDTO;
+import mendes.dev95.med_management_system_backend.domain.usuario.dto.UsuarioUpdateResponseDTO;
 import mendes.dev95.med_management_system_backend.domain.usuario.service.UsuarioService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -38,11 +39,11 @@ public class UsuarioController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UsuarioResponseDTO> update(
+    public ResponseEntity<UsuarioUpdateResponseDTO> update(
             @PathVariable UUID id,
             @Valid @RequestBody UsuarioUpdateRequestDTO request
     ) {
-        UsuarioResponseDTO response = usuarioService.update(id, request);
+        UsuarioUpdateResponseDTO response = usuarioService.update(id, request);
         return ResponseEntity.ok(response);
     }
     @DeleteMapping("/{id}")

@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import mendes.dev95.med_management_system_backend.domain.usuario.dto.UsuarioRegisterRequestDTO;
 import mendes.dev95.med_management_system_backend.domain.usuario.dto.UsuarioResponseDTO;
 import mendes.dev95.med_management_system_backend.domain.usuario.dto.UsuarioUpdateRequestDTO;
+import mendes.dev95.med_management_system_backend.domain.usuario.dto.UsuarioUpdateResponseDTO;
 import mendes.dev95.med_management_system_backend.domain.usuario.entity.Usuario;
 import mendes.dev95.med_management_system_backend.domain.usuario.exception.UsuarioFetchException;
 import mendes.dev95.med_management_system_backend.domain.usuario.exception.UsuarioNotFoundException;
@@ -74,7 +75,7 @@ public class UsuarioService {
     }
 
     @Transactional
-    public UsuarioResponseDTO update(UUID id, UsuarioUpdateRequestDTO request) {
+    public UsuarioUpdateResponseDTO update(UUID id, UsuarioUpdateRequestDTO request) {
         log.debug("Attempting to update user with id: {}", id);
 
         try {
@@ -88,7 +89,7 @@ public class UsuarioService {
             Usuario savedUsuario = repository.save(usuario);
 
             log.info("User successfully updated: {}", savedUsuario.getId());
-            return mapper.toResponse(savedUsuario);
+            return mapper.toUpdateResponse(savedUsuario);
 
         } catch (UsuarioNotFoundException ex) {
             throw ex;
