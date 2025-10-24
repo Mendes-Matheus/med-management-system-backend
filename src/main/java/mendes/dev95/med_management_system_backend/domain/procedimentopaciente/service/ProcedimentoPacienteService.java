@@ -90,6 +90,16 @@ public class ProcedimentoPacienteService {
         return mapper.toSimpleResponse(entity);
     }
 
+    public List<ProcedimentoPacienteSimpleResponseDTO> findByPacienteCpf(String cpf) {
+        var paciente = pacienteRepository.findByCpf(cpf)
+                .orElseThrow(() -> new PacienteNotFoundException("Paciente com CPF " + cpf + " não encontrado."));
+
+        var procedimentos = repository.findByPacienteCpf(cpf);
+
+        return mapper.toSimpleResponseList(procedimentos);
+    }
+
+
     public ProcedimentoPacienteSimpleResponseDTO update(UUID id, ProcedimentoPacienteUpdateDTO dto) {
         var procedimentoPaciente = repository.findById(id)
                 .orElseThrow(() -> new ProcedimentoNotFoundException(id));

@@ -54,6 +54,12 @@ public class ProcedimentoPacienteController {
         return ResponseEntity.ok(service.findByProcedimentoId(id));
     }
 
+    @GetMapping("/paciente/cpf/{cpf}")
+    public ResponseEntity<List<ProcedimentoPacienteSimpleResponseDTO>> findByPacienteCpf(@PathVariable String cpf) {
+        return ResponseEntity.ok(service.findByPacienteCpf(cpf));
+    }
+
+
     @PutMapping("/{id}")
     public ResponseEntity<ProcedimentoPacienteSimpleResponseDTO> update(
             @PathVariable UUID id,

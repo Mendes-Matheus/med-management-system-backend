@@ -15,6 +15,8 @@ public interface ProcedimentoPacienteRepository extends JpaRepository<Procedimen
 
     ProcedimentoPaciente findByProcedimentoId(UUID procedimentoId);
 
+    List<ProcedimentoPaciente> findByPacienteCpf(String cpf);
+
     boolean existsByPacienteIdAndProcedimentoId(UUID pacienteId, UUID procedimentoId);
 
     boolean existsByPacienteIdAndProcedimentoIdAndStatusIn(
