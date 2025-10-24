@@ -74,24 +74,26 @@ public class UsuarioService {
     }
 
     @Transactional
-    public UsuarioResponseDTO update(UsuarioRegisterRequestDTO request) {
-        log.debug("Attempting to update user with email: {}", request.email());
+    public UsuarioResponseDTO update(UUID id, UsuarioRegisterRequestDTO request) {
+        log.debug("Attempting to update user with id: {}", id);
 
         try {
-            Usuario usuario = repository.findByEmail(request.email())
+            Usuario usuario = repository.findById(id)
                     .orElseThrow(() -> {
-                        log.warn("Attempted to update non-existent user: {}", request.email());
+                        log.warn("Attempted to update non-existent user: {}", id);
                         return new UsuarioNotFoundException(getMessage("usuario.notfound"));
                     });
 
             updateExistingUser(usuario, request);
             Usuario savedUsuario = repository.save(usuario);
-            log.info("User successfully updated: {}", savedUsuario.getEmail());
+
+            log.info("User successfully updated: {}", savedUsuario.getId());
             return mapper.toResponse(savedUsuario);
+
         } catch (UsuarioNotFoundException ex) {
             throw ex;
         } catch (Exception ex) {
-            log.error("Error updating user with email: {}", request.email(), ex);
+            log.error("Error updating user with id: {}", id, ex);
             throw new UsuarioUpdateException(getMessage("usuario.update.error"), ex);
         }
     }

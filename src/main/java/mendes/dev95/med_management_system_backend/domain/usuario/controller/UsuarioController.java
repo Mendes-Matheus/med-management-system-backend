@@ -37,12 +37,14 @@ public class UsuarioController {
         return ResponseEntity.ok(usuario);
     }
 
-    @PutMapping
-    public ResponseEntity<UsuarioResponseDTO> update(@Valid @RequestBody UsuarioRegisterRequestDTO request) {
-        UsuarioResponseDTO response = usuarioService.update(request);
+    @PutMapping("/{id}")
+    public ResponseEntity<UsuarioResponseDTO> update(
+            @PathVariable UUID id,
+            @Valid @RequestBody UsuarioRegisterRequestDTO request
+    ) {
+        UsuarioResponseDTO response = usuarioService.update(id, request);
         return ResponseEntity.ok(response);
     }
-
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         usuarioService.delete(id);
