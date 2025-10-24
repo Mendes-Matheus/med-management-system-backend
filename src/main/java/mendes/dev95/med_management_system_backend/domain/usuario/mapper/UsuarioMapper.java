@@ -32,6 +32,6 @@ public interface UsuarioMapper {
     @Mapping(target = "version", ignore = true)
     @Mapping(target = "username", ignore = true)
     @Mapping(target = "email", ignore = true)
-    void updateEntityFromDto(UsuarioUpdateRequestDTO dto, @MappingTarget Usuario entity);
+    void updateEntityFromDto(UsuarioRegisterRequestDTO dto, @MappingTarget Usuario entity);
 
 }

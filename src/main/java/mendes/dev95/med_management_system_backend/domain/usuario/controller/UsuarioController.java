@@ -2,6 +2,7 @@ package mendes.dev95.med_management_system_backend.domain.usuario.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import mendes.dev95.med_management_system_backend.domain.usuario.dto.UsuarioRegisterRequestDTO;
 import mendes.dev95.med_management_system_backend.domain.usuario.dto.UsuarioResponseDTO;
 import mendes.dev95.med_management_system_backend.domain.usuario.dto.UsuarioUpdateRequestDTO;
 import mendes.dev95.med_management_system_backend.domain.usuario.service.UsuarioService;
@@ -37,8 +38,15 @@ public class UsuarioController {
     }
 
     @PutMapping
-    public ResponseEntity<UsuarioResponseDTO> update(@Valid @RequestBody UsuarioUpdateRequestDTO request) {
+    public ResponseEntity<UsuarioResponseDTO> update(@Valid @RequestBody UsuarioRegisterRequestDTO request) {
         UsuarioResponseDTO response = usuarioService.update(request);
         return ResponseEntity.ok(response);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
+        usuarioService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
 }

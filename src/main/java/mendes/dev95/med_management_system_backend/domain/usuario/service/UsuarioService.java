@@ -3,6 +3,7 @@ package mendes.dev95.med_management_system_backend.domain.usuario.service;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import mendes.dev95.med_management_system_backend.domain.usuario.dto.UsuarioRegisterRequestDTO;
 import mendes.dev95.med_management_system_backend.domain.usuario.dto.UsuarioResponseDTO;
 import mendes.dev95.med_management_system_backend.domain.usuario.dto.UsuarioUpdateRequestDTO;
 import mendes.dev95.med_management_system_backend.domain.usuario.entity.Usuario;
@@ -73,7 +74,7 @@ public class UsuarioService {
     }
 
     @Transactional
-    public UsuarioResponseDTO update(UsuarioUpdateRequestDTO request) {
+    public UsuarioResponseDTO update(UsuarioRegisterRequestDTO request) {
         log.debug("Attempting to update user with email: {}", request.email());
 
         try {
@@ -95,7 +96,7 @@ public class UsuarioService {
         }
     }
 
-    private void updateExistingUser(Usuario existingUser, UsuarioUpdateRequestDTO request) {
+    private void updateExistingUser(Usuario existingUser, UsuarioRegisterRequestDTO request) {
         log.debug("Updating existing user: {}", request.email());
         mapper.updateEntityFromDto(request, existingUser);
 
@@ -108,5 +109,26 @@ public class UsuarioService {
         Locale locale = LocaleContextHolder.getLocale();
         return messageSource.getMessage(code, args, locale);
     }
+
+
+    @Transactional
+    public void delete(UUID id) {
+        log.debug("Attempting to delete user with id: {}", id);
+
+        var usuario = repository.findById(id)
+                .orElseThrow(() -> {
+                    log.warn("Attempted to delete non-existent user with id: {}", id);
+                    return new UsuarioNotFoundException(getMessage("usuario.notfound"));
+                });
+
+        try {
+            repository.delete(usuario);
+            log.info("User successfully deleted with id: {}", id);
+        } catch (Exception ex) {
+            log.error("Error deleting user with id: {}", id, ex);
+            throw new UsuarioUpdateException(getMessage("usuario.delete.error"), ex);
+        }
+    }
+
 
 }
