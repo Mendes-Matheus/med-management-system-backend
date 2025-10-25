@@ -44,11 +44,6 @@ public record UsuarioUpdateRequestDTO(
         @Size(min = 4, message = "O username deve ter pelo menos 4 caracteres")
         String username,
 
-        //@Schema(description = "Senha de acesso")
-        @NotBlank(message = "A senha é obrigatória")
-        @Size(min = 8, message = "A senha deve ter pelo menos 8 caracteres")
-        String password,
-
         //@Schema(description = "Role do usuário")
         @NotNull(message = "O papel (role) é obrigatório")
         RolesUsuario role

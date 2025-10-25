@@ -102,10 +102,6 @@ public class UsuarioService {
     private void updateExistingUser(Usuario existingUser, UsuarioUpdateRequestDTO request) {
         log.debug("Updating existing user: {}", request.email());
         mapper.updateEntityFromDto(request, existingUser);
-
-        if (request.password() != null && !request.password().isBlank()) {
-            existingUser.setPassword(passwordEncoder.encode(request.password()));
-        }
     }
 
     private String getMessage(@NonNull String code, @NonNull Object... args) {
