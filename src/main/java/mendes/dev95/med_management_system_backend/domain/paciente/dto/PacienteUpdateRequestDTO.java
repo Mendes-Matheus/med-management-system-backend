@@ -2,7 +2,7 @@ package mendes.dev95.med_management_system_backend.domain.paciente.dto;
 
 import java.time.LocalDate;
 
-public record PacienteResponseDTO(
+public record PacienteUpdateRequestDTO(
         String nome,
         LocalDate dataNascimento,
         String cpf,

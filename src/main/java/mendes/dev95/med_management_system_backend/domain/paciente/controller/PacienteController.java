@@ -2,12 +2,9 @@ package mendes.dev95.med_management_system_backend.domain.paciente.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import mendes.dev95.med_management_system_backend.domain.paciente.dto.PacienteRequestDTO;
-import mendes.dev95.med_management_system_backend.domain.paciente.dto.PacienteResponseDTO;
-import mendes.dev95.med_management_system_backend.domain.paciente.dto.PacienteResponseWithProcedimentosDTO;
+import mendes.dev95.med_management_system_backend.domain.paciente.dto.*;
 import mendes.dev95.med_management_system_backend.domain.paciente.service.PacienteService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -24,7 +21,7 @@ public class PacienteController {
     private final PacienteService service;
 
     @PostMapping
-    public ResponseEntity<PacienteResponseDTO> save(@RequestBody @Valid PacienteRequestDTO requestDTO) {
+    public ResponseEntity<PacienteFullResponseDTO> save(@RequestBody @Valid PacienteRequestDTO requestDTO) {
         var response = service.save(requestDTO);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -63,7 +60,7 @@ public class PacienteController {
     @PutMapping("/{id}")
     public ResponseEntity<PacienteResponseDTO> update(
             @PathVariable UUID id,
-            @RequestBody @Valid PacienteRequestDTO request
+            @RequestBody @Valid PacienteUpdateRequestDTO request
     ) {
         return ResponseEntity.ok(service.update(id, request));
     }

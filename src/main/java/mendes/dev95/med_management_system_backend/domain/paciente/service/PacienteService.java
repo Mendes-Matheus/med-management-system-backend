@@ -2,10 +2,7 @@ package mendes.dev95.med_management_system_backend.domain.paciente.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import mendes.dev95.med_management_system_backend.domain.paciente.dto.PacienteRequestDTO;
-import mendes.dev95.med_management_system_backend.domain.paciente.dto.PacienteResponseDTO;
-import mendes.dev95.med_management_system_backend.domain.paciente.dto.PacienteResponseWithProcedimentosDTO;
-import mendes.dev95.med_management_system_backend.domain.paciente.entity.Paciente;
+import mendes.dev95.med_management_system_backend.domain.paciente.dto.*;
 import mendes.dev95.med_management_system_backend.domain.paciente.exception.PacienteAlreadyExistsException;
 import mendes.dev95.med_management_system_backend.domain.paciente.exception.PacienteNotFoundException;
 import mendes.dev95.med_management_system_backend.domain.paciente.mapper.PacienteMapper;
@@ -30,7 +27,7 @@ public class PacienteService {
     private final PacienteMapper mapper;
 
     @Transactional
-    public PacienteResponseDTO save(PacienteRequestDTO dto) {
+    public PacienteFullResponseDTO save(PacienteRequestDTO dto) {
         log.debug("Tentando salvar paciente com CPF: {}", MaskUtil.maskCpf(dto.cpf()));
 
         ensureUniquePaciente(dto.cpf(), dto.rg(), dto.cns(), dto.email());
@@ -39,7 +36,7 @@ public class PacienteService {
         var saved = repository.save(entity);
 
         log.info("Paciente salvo com sucesso: {}", MaskUtil.maskCpf(saved.getCpf()));
-        return mapper.toResponse(saved);
+        return mapper.toFullResponse(saved);
     }
 
     private void ensureUniquePaciente(String cpf, String rg, String cns, String email) {
@@ -93,11 +90,11 @@ public class PacienteService {
     }
 
     @Transactional
-    public PacienteResponseDTO update(UUID id, PacienteRequestDTO dto) {
+    public PacienteResponseDTO update(UUID id, PacienteUpdateRequestDTO dto) {
         var paciente = repository.findById(id)
                 .orElseThrow(() -> new PacienteNotFoundException(id));
 
-        mapper.entityFromDto(dto, paciente);
+        mapper.entityFromUpdateDto(dto, paciente);
         var updated = repository.save(paciente);
 
         log.info("Paciente atualizado com sucesso: {}", MaskUtil.maskCpf(updated.getCpf()));

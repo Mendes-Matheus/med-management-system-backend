@@ -1,7 +1,7 @@
 package mendes.dev95.med_management_system_backend.domain.procedimentopaciente.mapper;
 
 import mendes.dev95.med_management_system_backend.domain.estabelecimento.dto.EstabelecimentoSimpleResponseDTO;
-import mendes.dev95.med_management_system_backend.domain.paciente.dto.PacienteResponseDTO;
+import mendes.dev95.med_management_system_backend.domain.paciente.dto.PacienteFullResponseDTO;
 import mendes.dev95.med_management_system_backend.domain.paciente.dto.PacienteSimpleResponseDTO;
 import mendes.dev95.med_management_system_backend.domain.paciente.entity.Paciente;
 import mendes.dev95.med_management_system_backend.domain.procedimento.dto.ProcedimentoResponseDTO;
@@ -99,10 +99,10 @@ public interface ProcedimentoPacienteMapper {
     // ============== SUPORTES ==================
     // ==========================================
 
-    private PacienteResponseDTO toPacienteResponse(Paciente paciente) {
+    private PacienteFullResponseDTO toPacienteResponse(Paciente paciente) {
         if (paciente == null) return null;
 
-        return new PacienteResponseDTO(
+        return new PacienteFullResponseDTO(
                 paciente.getId(),
                 paciente.getNome(),
                 paciente.getDataNascimento(),

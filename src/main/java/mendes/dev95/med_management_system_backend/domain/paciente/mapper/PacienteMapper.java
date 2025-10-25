@@ -1,8 +1,6 @@
 package mendes.dev95.med_management_system_backend.domain.paciente.mapper;
 
-import mendes.dev95.med_management_system_backend.domain.paciente.dto.PacienteRequestDTO;
-import mendes.dev95.med_management_system_backend.domain.paciente.dto.PacienteResponseDTO;
-import mendes.dev95.med_management_system_backend.domain.paciente.dto.PacienteResponseWithProcedimentosDTO;
+import mendes.dev95.med_management_system_backend.domain.paciente.dto.*;
 import mendes.dev95.med_management_system_backend.domain.paciente.entity.Paciente;
 import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.mapper.ProcedimentoPacienteMapper;
 import org.mapstruct.Mapper;
@@ -19,6 +17,8 @@ public interface PacienteMapper {
     @Mapping(target = "procedimentos", ignore = true)
     Paciente toEntity(PacienteRequestDTO dto);
 
+    PacienteFullResponseDTO toFullResponse(Paciente entity);
+
     PacienteResponseDTO toResponse(Paciente entity);
 
     @Mapping(target = "procedimentos", ignore = true)
@@ -29,5 +29,8 @@ public interface PacienteMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "version", ignore = true)
     void entityFromDto(PacienteRequestDTO dto, @MappingTarget Paciente entity);
+
+
+    void entityFromUpdateDto(PacienteUpdateRequestDTO dto, @MappingTarget Paciente entity);
 }
 
