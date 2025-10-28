@@ -15,7 +15,6 @@ public record UsuarioResponseDTO(
         String telefone,
         String email,
         String username,
-        String password,
         RolesUsuario role
 ) {}
 

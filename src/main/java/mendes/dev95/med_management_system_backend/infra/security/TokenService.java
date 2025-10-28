@@ -36,12 +36,12 @@ public class TokenService {
     @Value("${api.security.token.issuer}")
     private String issuer;
 
-    /** Tempo padrão de expiração do Access Token (15 minutos) */
-    @Value("${api.security.token.access-expiration-seconds:900}")
+    /** Tempo padrão de expiração do Access Token (2 horas) */
+    @Value("${api.security.token.access-expiration-seconds:7200}")
     private Long accessExpirationSeconds;
 
-    /** Tempo padrão de expiração do Refresh Token (7 dias) */
-    @Value("${api.security.token.refresh-expiration-seconds:604800}")
+    /** Tempo padrão de expiração do Refresh Token (12 horas) */
+    @Value("${api.security.token.refresh-expiration-seconds:43200}")
     private Long refreshExpirationSeconds;
 
     /**
