@@ -47,7 +47,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/auth/register").hasAnyRole("SUPER_ADMIN", "ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/auth/logout").permitAll()
                         .requestMatchers(HttpMethod.GET, "/auth/refresh").permitAll()
 
