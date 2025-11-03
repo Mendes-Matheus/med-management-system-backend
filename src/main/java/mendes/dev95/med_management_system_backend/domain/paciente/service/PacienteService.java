@@ -3,17 +3,20 @@ package mendes.dev95.med_management_system_backend.domain.paciente.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mendes.dev95.med_management_system_backend.domain.paciente.dto.*;
+import mendes.dev95.med_management_system_backend.domain.paciente.entity.Paciente;
 import mendes.dev95.med_management_system_backend.domain.paciente.exception.PacienteAlreadyExistsException;
 import mendes.dev95.med_management_system_backend.domain.paciente.exception.PacienteNotFoundException;
 import mendes.dev95.med_management_system_backend.domain.paciente.mapper.PacienteMapper;
 import mendes.dev95.med_management_system_backend.domain.paciente.repository.PacienteRepository;
+import mendes.dev95.med_management_system_backend.domain.usuario.exception.UsuarioFetchException;
 import mendes.dev95.med_management_system_backend.infra.util.MaskUtil;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
@@ -61,8 +64,16 @@ public class PacienteService {
         }
     }
 
-    public List<PacienteResponseDTO> findAll() {
-        return mapper.toResponseList(repository.findAll());
+    public Page<PacienteResponseDTO> findAll(Pageable pageable) {
+        try {
+            Page<Paciente> usuarios = repository.findAll(pageable);
+            Page<PacienteResponseDTO> response = usuarios.map(mapper::toResponse);
+            log.debug("Found {} users", response.getTotalElements());
+            return response;
+        } catch (Exception ex) {
+            log.error("Error fetching all users", ex);
+            throw new UsuarioFetchException(getMessage("usuario.fetch.error"), ex);
+        }
     }
 
     public PacienteResponseDTO findById(UUID id) {

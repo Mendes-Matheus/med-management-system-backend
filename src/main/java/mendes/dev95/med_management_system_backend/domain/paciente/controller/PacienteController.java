@@ -4,12 +4,14 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import mendes.dev95.med_management_system_backend.domain.paciente.dto.*;
 import mendes.dev95.med_management_system_backend.domain.paciente.service.PacienteService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -33,8 +35,8 @@ public class PacienteController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PacienteResponseDTO>> findAll() {
-        return ResponseEntity.ok(service.findAll());
+    public ResponseEntity<Page<PacienteResponseDTO>> findAll(@PageableDefault(size = 10) Pageable pageable) {
+        return ResponseEntity.ok(service.findAll(pageable));
     }
 
     @GetMapping("/{id}")
