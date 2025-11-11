@@ -39,9 +39,6 @@ public class Procedimento implements Serializable {
     @Enumerated(EnumType.STRING)
     private TipoProcedimento tipoProcedimento;
 
-    @Column(name = "retorno", nullable = false)
-    private boolean retorno;
-
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "procedimento_estabelecimento",
