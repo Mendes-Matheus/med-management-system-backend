@@ -67,7 +67,7 @@ public interface ProcedimentoPacienteMapper {
 
         return new ProcedimentoPacienteSimpleResponseDTO(
                 entity.getId(),
-                entity.getStatus() != null ? entity.getStatus().name() : null,
+                entity.getStatus() != null ? entity.getStatus() : null,
                 entity.getDataSolicitacao(),
                 entity.getDataAgendamento(),
                 pacienteDTO,
@@ -136,8 +136,7 @@ public interface ProcedimentoPacienteMapper {
                 procedimento.getNomeProcedimento(),
                 procedimento.getTipoProcedimento(),
                 procedimento.getObservacoes(),
-                procedimento.getOrientacoes(),
-                estabelecimentos
+                procedimento.getOrientacoes()
         );
     }
 
@@ -180,4 +179,6 @@ public interface ProcedimentoPacienteMapper {
     @Mapping(target = "version", ignore = true)
     @Mapping(target = "procedimento", ignore = true)
     void updateEntityFromDto(ProcedimentoPacienteUpdateDTO dto, @MappingTarget ProcedimentoPaciente entity);
+
+    ProcedimentoPacienteSimpleResponseDTO toResponse(ProcedimentoPaciente procedimentoPaciente);
 }

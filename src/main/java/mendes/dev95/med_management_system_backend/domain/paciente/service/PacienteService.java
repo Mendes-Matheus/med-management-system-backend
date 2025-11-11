@@ -66,10 +66,8 @@ public class PacienteService {
 
     public Page<PacienteResponseDTO> findAll(Pageable pageable) {
         try {
-            Page<Paciente> usuarios = repository.findAll(pageable);
-            Page<PacienteResponseDTO> response = usuarios.map(mapper::toResponse);
-            log.debug("Found {} users", response.getTotalElements());
-            return response;
+            var pacientes = repository.findAllPacientes(pageable);
+            return pacientes;
         } catch (Exception ex) {
             log.error("Error fetching all users", ex);
             throw new UsuarioFetchException(getMessage("usuario.fetch.error"), ex);
@@ -88,10 +86,14 @@ public class PacienteService {
         return mapper.toResponse(entity);
     }
 
-    public PacienteResponseDTO findByNome(String nome) {
-        var entity = repository.findByNome(nome)
-                .orElseThrow(() -> new PacienteNotFoundException(nome));
+    public PacienteResponseDTO findByCns(String cns) {
+        var entity = repository.findByCns(cns)
+                .orElseThrow(() -> new PacienteNotFoundException(cns));
         return mapper.toResponse(entity);
+    }
+
+    public Page<PacienteResponseDTO> findByNome(String nome, Pageable pageable) {
+        return repository.findByNomeContainingIgnoreCase(nome, pageable);
     }
 
     public PacienteResponseWithProcedimentosDTO findProcedimentosPaciente(UUID id) {

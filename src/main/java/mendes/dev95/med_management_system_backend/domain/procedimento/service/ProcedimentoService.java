@@ -9,6 +9,7 @@ import mendes.dev95.med_management_system_backend.domain.estabelecimento.reposit
 import mendes.dev95.med_management_system_backend.domain.estabelecimento.service.EstabelecimentoService;
 import mendes.dev95.med_management_system_backend.domain.procedimento.dto.ProcedimentoRequestDTO;
 import mendes.dev95.med_management_system_backend.domain.procedimento.dto.ProcedimentoResponseDTO;
+import mendes.dev95.med_management_system_backend.domain.procedimento.dto.ProcedimentoSimpleResponseDTO;
 import mendes.dev95.med_management_system_backend.domain.procedimento.entity.Procedimento;
 import mendes.dev95.med_management_system_backend.domain.procedimento.exception.ProcedimentoNotFoundException;
 import mendes.dev95.med_management_system_backend.domain.procedimento.mapper.ProcedimentoMapper;
@@ -101,8 +102,8 @@ public class ProcedimentoService {
         return mapper.toResponseList(procedimentos);
     }
 
-    public List<ProcedimentoResponseDTO> findAll() {
-        return mapper.toResponseList(repository.findAll());
+    public List<ProcedimentoSimpleResponseDTO> findAll() {
+        return repository.findAllProcedimentos();
     }
 
     public ProcedimentoResponseDTO findById(UUID id) {

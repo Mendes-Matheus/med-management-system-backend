@@ -44,6 +44,14 @@ public class PacienteController {
         return ResponseEntity.ok(service.findById(id));
     }
 
+    @GetMapping("/nome/{nome}")
+    public ResponseEntity<Page<PacienteResponseDTO>> findByNome(
+            @PathVariable String nome,
+            @PageableDefault(size = 10, sort = "nome") Pageable pageable) {
+        return ResponseEntity.ok(service.findByNome(nome, pageable));
+    }
+
+
     @GetMapping("procedimentos/{id}")
     public ResponseEntity<PacienteResponseWithProcedimentosDTO> findProcedimentosPaciente(@PathVariable UUID id) {
         return ResponseEntity.ok(service.findProcedimentosPaciente(id));
@@ -54,9 +62,9 @@ public class PacienteController {
         return ResponseEntity.ok(service.findByCpf(cpf));
     }
 
-    @GetMapping("/nome/{nome}")
-    public ResponseEntity<PacienteResponseDTO> findByNome(@PathVariable String nome) {
-        return ResponseEntity.ok(service.findByNome(nome));
+    @GetMapping("/cns/{cns}")
+    public ResponseEntity<PacienteResponseDTO> findByCns(@PathVariable String cns) {
+        return ResponseEntity.ok(service.findByCns(cns));
     }
 
     @PutMapping("/{id}")

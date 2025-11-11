@@ -11,6 +11,6 @@ public record ProcedimentoSimpleResponseDTO(
         String nomeProcedimento,
         TipoProcedimento tipoProcedimento,
         String orientacoes,
-        String observacoes,
-        List<EstabelecimentoSimpleResponseDTO> estabelecimentos
+        String observacoes
+//        List<EstabelecimentoSimpleResponseDTO> estabelecimentos
 ) {}

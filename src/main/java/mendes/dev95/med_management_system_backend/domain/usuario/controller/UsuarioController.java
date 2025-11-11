@@ -7,6 +7,8 @@ import mendes.dev95.med_management_system_backend.domain.usuario.dto.UsuarioResp
 import mendes.dev95.med_management_system_backend.domain.usuario.dto.UsuarioUpdateRequestDTO;
 import mendes.dev95.med_management_system_backend.domain.usuario.dto.UsuarioUpdateResponseDTO;
 import mendes.dev95.med_management_system_backend.domain.usuario.service.UsuarioService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,8 +23,8 @@ public class UsuarioController {
     private final UsuarioService usuarioService;
 
     @GetMapping
-    public ResponseEntity<List<UsuarioResponseDTO>> findAll() {
-        List<UsuarioResponseDTO> usuarios = usuarioService.findAllUsuarios();
+    public ResponseEntity<Page<UsuarioResponseDTO>> findAll(Pageable pageable) {
+        Page<UsuarioResponseDTO> usuarios = usuarioService.findAllUsuarios(pageable);
         return ResponseEntity.ok(usuarios);
     }
 

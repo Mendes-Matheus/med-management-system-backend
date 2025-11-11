@@ -1,6 +1,9 @@
 package mendes.dev95.med_management_system_backend.domain.usuario.repository;
 
+import mendes.dev95.med_management_system_backend.domain.usuario.dto.UsuarioResponseDTO;
 import mendes.dev95.med_management_system_backend.domain.usuario.entity.Usuario;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

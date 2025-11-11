@@ -8,6 +8,7 @@ import mendes.dev95.med_management_system_backend.domain.usuario.entity.Usuario;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,6 +30,8 @@ public interface UsuarioMapper {
 
     // converte lista de entidades em lista de respostas
     List<UsuarioResponseDTO> toResponseList(List<Usuario> entities);
+
+//    Page<UsuarioResponseDTO> toResponsePageableList(Page<Usuario> entities);
 
     void updateEntityFromDto(UsuarioUpdateRequestDTO dto, @MappingTarget Usuario entity);
 

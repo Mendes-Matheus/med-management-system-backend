@@ -15,6 +15,8 @@ import mendes.dev95.med_management_system_backend.domain.usuario.mapper.UsuarioM
 import mendes.dev95.med_management_system_backend.domain.usuario.repository.UsuarioRepository;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,19 +62,20 @@ public class UsuarioService {
     }
 
 
-    public List<UsuarioResponseDTO> findAllUsuarios() {
+    public Page<UsuarioResponseDTO> findAllUsuarios(Pageable pageable) {
         log.debug("Fetching all users");
 
         try {
-            List<Usuario> usuarios = repository.findAll();
-            List<UsuarioResponseDTO> response = mapper.toResponseList(usuarios);
-            log.debug("Found {} users", response.size());
+            Page<Usuario> usuarios = repository.findAll(pageable);
+            Page<UsuarioResponseDTO> response = usuarios.map(mapper::toResponse);
+            log.debug("Found {} users", response.getTotalElements());
             return response;
         } catch (Exception ex) {
             log.error("Error fetching all users", ex);
             throw new UsuarioFetchException(getMessage("usuario.fetch.error"), ex);
         }
     }
+
 
     @Transactional
     public UsuarioUpdateResponseDTO update(UUID id, UsuarioUpdateRequestDTO request) {

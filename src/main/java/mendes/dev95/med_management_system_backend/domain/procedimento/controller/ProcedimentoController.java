@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import mendes.dev95.med_management_system_backend.domain.procedimento.dto.ProcedimentoRequestDTO;
 import mendes.dev95.med_management_system_backend.domain.procedimento.dto.ProcedimentoResponseDTO;
+import mendes.dev95.med_management_system_backend.domain.procedimento.dto.ProcedimentoSimpleResponseDTO;
 import mendes.dev95.med_management_system_backend.domain.procedimento.service.ProcedimentoService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,7 +35,7 @@ public class ProcedimentoController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ProcedimentoResponseDTO>> findAll() {
+    public ResponseEntity<List<ProcedimentoSimpleResponseDTO>> findAll() {
         return ResponseEntity.ok(service.findAll());
     }
 
