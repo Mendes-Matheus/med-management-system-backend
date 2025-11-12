@@ -9,6 +9,8 @@ import java.util.UUID;
 
 public record ProcedimentoPacienteUpdateDTO(
 
+        Boolean retorno,
+
         @NotNull(message = "{procedimento.paciente.request.dataSolicitacao.notnull}")
         LocalDate dataSolicitacao,
 

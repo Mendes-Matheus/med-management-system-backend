@@ -15,6 +15,8 @@ public record ProcedimentoPacienteRequestDTO(
         @Size(max = 1000, message = "{procedimento.paciente.request.observacoes.size}")
         String observacoes,
 
+        Boolean retorno,
+
         @NotNull(message = "{procedimento.paciente.request.pacienteId.notnull}")
         UUID pacienteId,
 

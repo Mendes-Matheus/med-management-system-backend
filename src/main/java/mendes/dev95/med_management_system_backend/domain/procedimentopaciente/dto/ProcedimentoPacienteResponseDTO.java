@@ -10,6 +10,7 @@ public record ProcedimentoPacienteResponseDTO (
 
         UUID id,
         String status,
+        Boolean retorno,
         LocalDate dataSolicitacao,
         LocalDate dataAgendamento,
         String observacoes,

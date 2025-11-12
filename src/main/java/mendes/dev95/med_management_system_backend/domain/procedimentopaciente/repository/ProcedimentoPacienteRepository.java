@@ -23,6 +23,7 @@ public interface ProcedimentoPacienteRepository extends JpaRepository<Procedimen
         SELECT new mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPacienteSimpleResponseDTO(
             pp.id,
             pp.status,
+            pp.retorno,
             pp.dataSolicitacao,
             pp.dataAgendamento,
             new mendes.dev95.med_management_system_backend.domain.paciente.dto.PacienteSimpleResponseDTO(
@@ -55,6 +56,7 @@ public interface ProcedimentoPacienteRepository extends JpaRepository<Procedimen
         SELECT new mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPacienteSimpleResponseDTO(
             pp.id,
             pp.status,
+            pp.retorno,
             pp.dataSolicitacao,
             pp.dataAgendamento,
             new mendes.dev95.med_management_system_backend.domain.paciente.dto.PacienteSimpleResponseDTO(
@@ -88,6 +90,7 @@ public interface ProcedimentoPacienteRepository extends JpaRepository<Procedimen
         SELECT new mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPacienteSimpleResponseDTO(
             pp.id,
             pp.status,
+            pp.retorno,
             pp.dataSolicitacao,
             pp.dataAgendamento,
             new mendes.dev95.med_management_system_backend.domain.paciente.dto.PacienteSimpleResponseDTO(
@@ -121,6 +124,7 @@ public interface ProcedimentoPacienteRepository extends JpaRepository<Procedimen
         SELECT new mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPacienteSimpleResponseDTO(
             pp.id,
             pp.status,
+            pp.retorno,
             pp.dataSolicitacao,
             pp.dataAgendamento,
             new mendes.dev95.med_management_system_backend.domain.paciente.dto.PacienteSimpleResponseDTO(
@@ -155,6 +159,7 @@ public interface ProcedimentoPacienteRepository extends JpaRepository<Procedimen
         SELECT new mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPacienteSimpleResponseDTO(
             pp.id,
             pp.status,
+            pp.retorno,
             pp.dataSolicitacao,
             pp.dataAgendamento,
             new mendes.dev95.med_management_system_backend.domain.paciente.dto.PacienteSimpleResponseDTO(
@@ -187,6 +192,7 @@ public interface ProcedimentoPacienteRepository extends JpaRepository<Procedimen
         SELECT new mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPacienteSimpleResponseDTO(
             pp.id,
             pp.status,
+            pp.retorno,
             pp.dataSolicitacao,
             pp.dataAgendamento,
             new mendes.dev95.med_management_system_backend.domain.paciente.dto.PacienteSimpleResponseDTO(
@@ -220,6 +226,7 @@ public interface ProcedimentoPacienteRepository extends JpaRepository<Procedimen
         SELECT new mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPacienteSimpleResponseDTO(
             pp.id,
             pp.status,
+            pp.retorno,
             pp.dataSolicitacao,
             pp.dataAgendamento,
             new mendes.dev95.med_management_system_backend.domain.paciente.dto.PacienteSimpleResponseDTO(
@@ -253,6 +260,7 @@ public interface ProcedimentoPacienteRepository extends JpaRepository<Procedimen
         SELECT new mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPacienteSimpleResponseDTO(
             pp.id,
             pp.status,
+            pp.retorno,
             pp.dataSolicitacao,
             pp.dataAgendamento,
             new mendes.dev95.med_management_system_backend.domain.paciente.dto.PacienteSimpleResponseDTO(
@@ -286,6 +294,7 @@ public interface ProcedimentoPacienteRepository extends JpaRepository<Procedimen
         SELECT new mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPacienteSimpleResponseDTO(
             pp.id,
             pp.status,
+            pp.retorno,
             pp.dataSolicitacao,
             pp.dataAgendamento,
             new mendes.dev95.med_management_system_backend.domain.paciente.dto.PacienteSimpleResponseDTO(
@@ -315,6 +324,7 @@ public interface ProcedimentoPacienteRepository extends JpaRepository<Procedimen
         SELECT new mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPacienteSimpleResponseDTO(
             pp.id,
             pp.status,
+            pp.retorno,
             pp.dataSolicitacao,
             pp.dataAgendamento,
             new mendes.dev95.med_management_system_backend.domain.paciente.dto.PacienteSimpleResponseDTO(
@@ -345,6 +355,7 @@ public interface ProcedimentoPacienteRepository extends JpaRepository<Procedimen
         SELECT new mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPacienteSimpleResponseDTO(
             pp.id,
             pp.status,
+            pp.retorno,
             pp.dataSolicitacao,
             pp.dataAgendamento,
             new mendes.dev95.med_management_system_backend.domain.paciente.dto.PacienteSimpleResponseDTO(
@@ -375,6 +386,7 @@ public interface ProcedimentoPacienteRepository extends JpaRepository<Procedimen
         SELECT new mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPacienteSimpleResponseDTO(
             pp.id,
             pp.status,
+            pp.retorno,
             pp.dataSolicitacao,
             pp.dataAgendamento,
             new mendes.dev95.med_management_system_backend.domain.paciente.dto.PacienteSimpleResponseDTO(
@@ -414,6 +426,7 @@ public interface ProcedimentoPacienteRepository extends JpaRepository<Procedimen
         SELECT new mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPacienteSimpleResponseDTO(
             pp.id,
             pp.status,
+            pp.retorno,
             pp.dataSolicitacao,
             pp.dataAgendamento,
             new mendes.dev95.med_management_system_backend.domain.paciente.dto.PacienteSimpleResponseDTO(
@@ -443,6 +456,7 @@ public interface ProcedimentoPacienteRepository extends JpaRepository<Procedimen
         SELECT new mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPacienteSimpleResponseDTO(
             pp.id,
             pp.status,
+            pp.retorno,
             pp.dataSolicitacao,
             pp.dataAgendamento,
             new mendes.dev95.med_management_system_backend.domain.paciente.dto.PacienteSimpleResponseDTO(
@@ -473,6 +487,7 @@ public interface ProcedimentoPacienteRepository extends JpaRepository<Procedimen
         SELECT new mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPacienteSimpleResponseDTO(
             pp.id,
             pp.status,
+            pp.retorno,
             pp.dataSolicitacao,
             pp.dataAgendamento,
             new mendes.dev95.med_management_system_backend.domain.paciente.dto.PacienteSimpleResponseDTO(
@@ -502,6 +517,7 @@ public interface ProcedimentoPacienteRepository extends JpaRepository<Procedimen
         SELECT new mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPacienteSimpleResponseDTO(
             pp.id,
             pp.status,
+            pp.retorno,
             pp.dataSolicitacao,
             pp.dataAgendamento,
             new mendes.dev95.med_management_system_backend.domain.paciente.dto.PacienteSimpleResponseDTO(

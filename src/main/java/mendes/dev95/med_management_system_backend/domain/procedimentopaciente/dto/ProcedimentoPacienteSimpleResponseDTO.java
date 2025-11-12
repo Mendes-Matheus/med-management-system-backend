@@ -10,6 +10,7 @@ import java.util.UUID;
 public record ProcedimentoPacienteSimpleResponseDTO(
         UUID id,
         StatusProcedimento status,
+        Boolean retorno,
         LocalDate dataSolicitacao,
         LocalDate dataAgendamento,
         PacienteSimpleResponseDTO paciente,
