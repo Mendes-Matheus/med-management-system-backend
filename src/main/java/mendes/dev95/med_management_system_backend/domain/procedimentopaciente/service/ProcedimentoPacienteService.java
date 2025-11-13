@@ -7,10 +7,7 @@ import mendes.dev95.med_management_system_backend.domain.paciente.repository.Pac
 import mendes.dev95.med_management_system_backend.domain.procedimento.exception.ProcedimentoAgendadoException;
 import mendes.dev95.med_management_system_backend.domain.procedimento.exception.ProcedimentoNotFoundException;
 import mendes.dev95.med_management_system_backend.domain.procedimento.repository.ProcedimentoRepository;
-import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPacienteRequestDTO;
-import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPacienteResponseDTO;
-import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPacienteSimpleResponseDTO;
-import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPacienteUpdateDTO;
+import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.*;
 import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.entity.ProcedimentoPaciente;
 import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.entity.StatusProcedimento;
 import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.exception.ProcedimentoPacienteNotFoundException;
@@ -23,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
@@ -281,6 +279,78 @@ public class ProcedimentoPacienteService {
         }
     }
 
+    public Page<ProcedimentoPacienteSimpleResponseDTO> findConsultasBetweenDates(
+            LocalDate dataInicio,
+            LocalDate dataFim,
+            Pageable pageable
+    ) {
+        try {
+            log.debug("Buscando consultas entre {} e {}", dataInicio, dataFim);
+
+            if (dataInicio.isAfter(dataFim)) {
+                throw new IllegalArgumentException("Data início não pode ser após data fim");
+            }
+
+            var consultas = repository.findConsultasBetweenDates(dataInicio, dataFim, pageable);
+            log.debug("Encontradas {} consultas no período", consultas.getTotalElements());
+            return consultas;
+
+        } catch (Exception ex) {
+            log.error("Erro ao buscar consultas entre {} e {}", dataInicio, dataFim, ex);
+            throw new UsuarioFetchException(getMessage("procedimentopaciente.fetch.error"), ex);
+        }
+    }
+
+    public Page<ProcedimentoPacienteSimpleResponseDTO> findConsultasByFiltro(
+            ConsultaFiltroRequestDTO filtroRequest,
+            Pageable pageable
+    ) {
+        try {
+            log.debug("Buscando consultas com filtros: CPF={}, Data Início={}, Data Fim={}, Status={}, Procedimento={}",
+                    filtroRequest.cpf(), filtroRequest.dataInicio(), filtroRequest.dataFim(),
+                    filtroRequest.status(), filtroRequest.procedimentoId());
+
+            // Valida se pelo menos um filtro foi preenchido
+            if (!hasActiveFilters(filtroRequest)) {
+                log.debug("Nenhum filtro ativo, retornando todas as consultas");
+                return repository.findAllConsultas(pageable);
+            }
+
+            // Validação de datas
+            if ((filtroRequest.dataInicio() != null && filtroRequest.dataFim() == null) ||
+                    (filtroRequest.dataInicio() == null && filtroRequest.dataFim() != null)) {
+                throw new IllegalArgumentException("Ambas as datas (início e fim) devem ser preenchidas ou nenhuma");
+            }
+
+            // Busca no repositório
+            var consultas = repository.findConsultasByFiltro(
+                    filtroRequest.cpf(),
+                    filtroRequest.dataInicio(),
+                    filtroRequest.dataFim(),
+                    filtroRequest.status(),
+                    filtroRequest.procedimentoId(),
+                    pageable
+            );
+
+            log.debug("Encontradas {} consultas com os filtros aplicados", consultas.getTotalElements());
+            return consultas;
+
+        } catch (IllegalArgumentException ex) {
+            log.error("Erro de validação nos filtros: {}", ex.getMessage());
+            throw ex;
+        } catch (Exception ex) {
+            log.error("Erro ao buscar consultas com filtros", ex);
+            throw new UsuarioFetchException(getMessage("procedimentopaciente.fetch.error"), ex);
+        }
+    }
+
+    private boolean hasActiveFilters(ConsultaFiltroRequestDTO filtroRequest) {
+        return filtroRequest.cpf() != null && !filtroRequest.cpf().isEmpty() ||
+                filtroRequest.dataInicio() != null ||
+                filtroRequest.dataFim() != null ||
+                filtroRequest.status() != null ||
+                filtroRequest.procedimentoId() != null;
+    }
 
 
     private String getMessage(String code, Object... args) {

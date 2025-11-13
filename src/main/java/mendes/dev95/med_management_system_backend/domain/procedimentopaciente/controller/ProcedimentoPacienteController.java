@@ -2,10 +2,7 @@ package mendes.dev95.med_management_system_backend.domain.procedimentopaciente.c
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPacienteRequestDTO;
-import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPacienteResponseDTO;
-import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPacienteSimpleResponseDTO;
-import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPacienteUpdateDTO;
+import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.*;
 import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.service.ProcedimentoPacienteService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -176,6 +173,34 @@ public class ProcedimentoPacienteController {
             @RequestBody @Valid ProcedimentoPacienteUpdateDTO request
     ) {
         return ResponseEntity.ok(service.update(id, request));
+    }
+
+    @GetMapping("/consultas/periodo")
+    public ResponseEntity<Page<ProcedimentoPacienteSimpleResponseDTO>> findConsultasBetweenDates(
+            @Valid ConsultaPeriodoRequest periodoRequest,
+            @PageableDefault(
+                    size = 10,
+                    sort = "dataSolicitacao",
+                    direction = Sort.Direction.DESC
+            ) Pageable pageable
+    ) {
+        return ResponseEntity.ok(service.findConsultasBetweenDates(
+                periodoRequest.dataInicio(),
+                periodoRequest.dataFim(),
+                pageable
+        ));
+    }
+
+    @GetMapping("/consultas/filtro")
+    public ResponseEntity<Page<ProcedimentoPacienteSimpleResponseDTO>> findConsultasByFiltro(
+            @Valid ConsultaFiltroRequestDTO filtroRequest,
+            @PageableDefault(
+                    size = 10,
+                    sort = "dataSolicitacao",
+                    direction = Sort.Direction.DESC
+            ) Pageable pageable
+    ) {
+        return ResponseEntity.ok(service.findConsultasByFiltro(filtroRequest, pageable));
     }
 
     @DeleteMapping("/{id}")
