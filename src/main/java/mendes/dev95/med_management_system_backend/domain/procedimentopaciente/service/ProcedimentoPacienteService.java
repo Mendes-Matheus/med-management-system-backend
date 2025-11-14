@@ -325,6 +325,7 @@ public class ProcedimentoPacienteService {
             // Busca no repositório
             var consultas = repository.findConsultasByFiltro(
                     filtroRequest.cpf(),
+                    filtroRequest.nome(),
                     filtroRequest.dataInicio(),
                     filtroRequest.dataFim(),
                     filtroRequest.status(),

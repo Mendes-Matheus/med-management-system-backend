@@ -12,6 +12,8 @@ public record ConsultaFiltroRequestDTO(
         @Pattern(regexp = "\\d{11}", message = "CPF deve conter 11 dígitos")
         String cpf,
 
+        String nome,
+
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
         LocalDate dataInicio,
 
