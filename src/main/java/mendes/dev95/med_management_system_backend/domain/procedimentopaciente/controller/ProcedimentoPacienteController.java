@@ -191,6 +191,38 @@ public class ProcedimentoPacienteController {
         ));
     }
 
+    @GetMapping("exames/periodo")
+    public ResponseEntity<Page<ProcedimentoPacienteSimpleResponseDTO>> findExamesBetweenDates(
+            @Valid ConsultaPeriodoRequest periodoRequest,
+            @PageableDefault(
+                    size = 10,
+                    sort = "dataSolicitacao",
+                    direction = Sort.Direction.DESC
+            ) Pageable pageable
+    ) {
+        return ResponseEntity.ok(service.findExamesBetweenDates(
+                periodoRequest.dataInicio(),
+                periodoRequest.dataFim(),
+                pageable
+        ));
+    }
+
+    @GetMapping("cirurgias/periodo")
+    public ResponseEntity<Page<ProcedimentoPacienteSimpleResponseDTO>> findCirurgiasBetweenDates(
+            @Valid ConsultaPeriodoRequest periodoRequest,
+            @PageableDefault(
+                    size = 10,
+                    sort = "dataSolicitacao",
+                    direction = Sort.Direction.DESC
+            ) Pageable pageable
+    ) {
+        return ResponseEntity.ok(service.findCirurgiasBetweenDates(
+                periodoRequest.dataInicio(),
+                periodoRequest.dataFim(),
+                pageable
+        ));
+    }
+
     @GetMapping("/consultas/filtro")
     public ResponseEntity<Page<ProcedimentoPacienteSimpleResponseDTO>> findConsultasByFiltro(
             @Valid ConsultaFiltroRequestDTO filtroRequest,
@@ -202,6 +234,32 @@ public class ProcedimentoPacienteController {
     ) {
         return ResponseEntity.ok(service.findConsultasByFiltro(filtroRequest, pageable));
     }
+
+    @GetMapping("/exames/filtro")
+    public ResponseEntity<Page<ProcedimentoPacienteSimpleResponseDTO>> findExamesByFiltro(
+            @Valid ConsultaFiltroRequestDTO filtroRequest,
+            @PageableDefault(
+                    size = 10,
+                    sort = "dataSolicitacao",
+                    direction = Sort.Direction.DESC
+            ) Pageable pageable
+    ) {
+        return ResponseEntity.ok(service.findExamesByFiltro(filtroRequest, pageable));
+    }
+
+    @GetMapping("/cirurgias/filtro")
+    public ResponseEntity<Page<ProcedimentoPacienteSimpleResponseDTO>> findCirurgiasByFiltro(
+            @Valid ConsultaFiltroRequestDTO filtroRequest,
+            @PageableDefault(
+                    size = 10,
+                    sort = "dataSolicitacao",
+                    direction = Sort.Direction.DESC
+            ) Pageable pageable
+    ) {
+        return ResponseEntity.ok(service.findCirurgiasByFiltro(filtroRequest, pageable));
+    }
+
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {

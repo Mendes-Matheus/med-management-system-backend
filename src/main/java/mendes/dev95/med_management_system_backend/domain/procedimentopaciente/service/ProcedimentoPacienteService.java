@@ -301,6 +301,50 @@ public class ProcedimentoPacienteService {
         }
     }
 
+    public Page<ProcedimentoPacienteSimpleResponseDTO> findExamesBetweenDates(
+            LocalDate dataInicio,
+            LocalDate dataFim,
+            Pageable pageable
+    ) {
+        try {
+            log.debug("Buscando exames entre {} e {}", dataInicio, dataFim);
+
+            if (dataInicio.isAfter(dataFim)) {
+                throw new IllegalArgumentException("Data início não pode ser após data fim");
+            }
+
+            var exames = repository.findExamesBetweenDates(dataInicio, dataFim, pageable);
+            log.debug("Encontradas {} exames no período", exames.getTotalElements());
+            return exames;
+
+        } catch (Exception ex) {
+            log.error("Erro ao buscar exames entre {} e {}", dataInicio, dataFim, ex);
+            throw new UsuarioFetchException(getMessage("procedimentopaciente.fetch.error"), ex);
+        }
+    }
+
+    public Page<ProcedimentoPacienteSimpleResponseDTO> findCirurgiasBetweenDates(
+            LocalDate dataInicio,
+            LocalDate dataFim,
+            Pageable pageable
+    ) {
+        try {
+            log.debug("Buscando cirurgias entre {} e {}", dataInicio, dataFim);
+
+            if (dataInicio.isAfter(dataFim)) {
+                throw new IllegalArgumentException("Data início não pode ser após data fim");
+            }
+
+            var cirurgias = repository.findCirurgiasBetweenDates(dataInicio, dataFim, pageable);
+            log.debug("Encontradas {} cirurgias no período", cirurgias.getTotalElements());
+            return cirurgias;
+
+        } catch (Exception ex) {
+            log.error("Erro ao buscar cirurgias entre {} e {}", dataInicio, dataFim, ex);
+            throw new UsuarioFetchException(getMessage("procedimentopaciente.fetch.error"), ex);
+        }
+    }
+
     public Page<ProcedimentoPacienteSimpleResponseDTO> findConsultasByFiltro(
             ConsultaFiltroRequestDTO filtroRequest,
             Pageable pageable
@@ -344,6 +388,100 @@ public class ProcedimentoPacienteService {
             throw new UsuarioFetchException(getMessage("procedimentopaciente.fetch.error"), ex);
         }
     }
+
+    public Page<ProcedimentoPacienteSimpleResponseDTO> findExamesByFiltro(
+            ConsultaFiltroRequestDTO filtroRequest,
+            Pageable pageable
+    ) {
+        try {
+            log.debug("Buscando exames com filtros: CPF={}, Data Início={}, Data Fim={}, Status={}, Procedimento={}",
+                    filtroRequest.cpf(), filtroRequest.dataInicio(), filtroRequest.dataFim(),
+                    filtroRequest.status(), filtroRequest.procedimentoId());
+
+            // Valida se pelo menos um filtro foi preenchido
+            if (!hasActiveFilters(filtroRequest)) {
+                log.debug("Nenhum filtro ativo, retornando todas as exames");
+                return repository.findAllExames(pageable);
+            }
+
+            // Validação de datas
+            if ((filtroRequest.dataInicio() != null && filtroRequest.dataFim() == null) ||
+                    (filtroRequest.dataInicio() == null && filtroRequest.dataFim() != null)) {
+                throw new IllegalArgumentException("Ambas as datas (início e fim) devem ser preenchidas ou nenhuma");
+            }
+
+            // Busca no repositório
+            var exames = repository.findExamesByFiltro(
+                    filtroRequest.cpf(),
+                    filtroRequest.nome(),
+                    filtroRequest.dataInicio(),
+                    filtroRequest.dataFim(),
+                    filtroRequest.status(),
+                    filtroRequest.procedimentoId(),
+                    pageable
+            );
+
+            log.debug("Encontradas {} exames com os filtros aplicados", exames.getTotalElements());
+            return exames;
+
+        } catch (IllegalArgumentException ex) {
+            log.error("Erro de validação nos filtros: {}", ex.getMessage());
+            throw ex;
+        } catch (Exception ex) {
+            log.error("Erro ao buscar exames com filtros", ex);
+            throw new UsuarioFetchException(getMessage("procedimentopaciente.fetch.error"), ex);
+        }
+    }
+
+    public Page<ProcedimentoPacienteSimpleResponseDTO> findCirurgiasByFiltro(
+            ConsultaFiltroRequestDTO filtroRequest,
+            Pageable pageable
+    ) {
+        try {
+            log.debug("Buscando cirurgias com filtros: CPF={}, Data Início={}, Data Fim={}, Status={}, Procedimento={}",
+                    filtroRequest.cpf(), filtroRequest.dataInicio(), filtroRequest.dataFim(),
+                    filtroRequest.status(), filtroRequest.procedimentoId());
+
+            // Valida se pelo menos um filtro foi preenchido
+            if (!hasActiveFilters(filtroRequest)) {
+                log.debug("Nenhum filtro ativo, retornando todas as cirurgias");
+                return repository.findAllCirurgias(pageable);
+            }
+
+            // Validação de datas
+            if ((filtroRequest.dataInicio() != null && filtroRequest.dataFim() == null) ||
+                    (filtroRequest.dataInicio() == null && filtroRequest.dataFim() != null)) {
+                throw new IllegalArgumentException("Ambas as datas (início e fim) devem ser preenchidas ou nenhuma");
+            }
+
+            // Busca no repositório
+            var cirurgias = repository.findCirurgiasByFiltro(
+                    filtroRequest.cpf(),
+                    filtroRequest.nome(),
+                    filtroRequest.dataInicio(),
+                    filtroRequest.dataFim(),
+                    filtroRequest.status(),
+                    filtroRequest.procedimentoId(),
+                    pageable
+            );
+
+            log.debug("Encontradas {} cirurgias com os filtros aplicados", cirurgias.getTotalElements());
+            return cirurgias;
+
+        } catch (IllegalArgumentException ex) {
+            log.error("Erro de validação nos filtros: {}", ex.getMessage());
+            throw ex;
+        } catch (Exception ex) {
+            log.error("Erro ao buscar cirurgias com filtros", ex);
+            throw new UsuarioFetchException(getMessage("procedimentopaciente.fetch.error"), ex);
+        }
+    }
+
+
+
+
+
+
 
     private boolean hasActiveFilters(ConsultaFiltroRequestDTO filtroRequest) {
         return filtroRequest.cpf() != null && !filtroRequest.cpf().isEmpty() ||
