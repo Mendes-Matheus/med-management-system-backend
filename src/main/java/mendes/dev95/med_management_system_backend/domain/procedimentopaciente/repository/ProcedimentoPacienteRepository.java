@@ -20,40 +20,6 @@ public interface ProcedimentoPacienteRepository extends JpaRepository<Procedimen
 
     ProcedimentoPaciente findByPacienteId(UUID pacienteId);
 
-    @Query("""
-        SELECT new mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPacienteSimpleResponseDTO(
-            pp.id,
-            pp.status,
-            pp.retorno,
-            pp.dataSolicitacao,
-            pp.dataAgendamento,
-            new mendes.dev95.med_management_system_backend.domain.paciente.dto.PacienteSimpleResponseDTO(
-                pa.nome,
-                pa.cpf,
-                pa.rg,
-                pa.cns,
-                pa.telefone
-            ),
-            new mendes.dev95.med_management_system_backend.domain.procedimento.dto.ProcedimentoSimpleResponseDTO(
-                p.id,
-                p.nomeProcedimento,
-                p.tipoProcedimento,
-                p.orientacoes,
-                p.observacoes
-            )
-        )
-        FROM ProcedimentoPaciente pp
-        JOIN pp.procedimento p
-        JOIN pp.paciente pa
-        WHERE p.tipoProcedimento = 'CONSULTA'
-            AND pp.dataSolicitacao BETWEEN :dataInicio AND :dataFim
-        ORDER BY pp.dataSolicitacao DESC
-    """)
-    Page<ProcedimentoPacienteSimpleResponseDTO> findConsultasBetweenDates(
-            @Param("dataInicio") LocalDate dataInicio,
-            @Param("dataFim") LocalDate dataFim,
-            Pageable pageable
-    );
 
     @Query("""
         SELECT new mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPacienteSimpleResponseDTO(
@@ -581,6 +547,35 @@ public interface ProcedimentoPacienteRepository extends JpaRepository<Procedimen
 
     @Query("""
         SELECT new mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPacienteSimpleResponseDTO(
+            pp.id, pp.status, pp.retorno, pp.dataSolicitacao, pp.dataAgendamento,
+            new mendes.dev95.med_management_system_backend.domain.paciente.dto.PacienteSimpleResponseDTO(
+                pa.nome, pa.cpf, pa.rg, pa.cns, pa.telefone
+            ),
+            new mendes.dev95.med_management_system_backend.domain.procedimento.dto.ProcedimentoSimpleResponseDTO(
+                p.id, p.nomeProcedimento, p.tipoProcedimento, p.orientacoes, p.observacoes
+            )
+        )
+        FROM ProcedimentoPaciente pp
+        JOIN pp.procedimento p
+        JOIN pp.paciente pa
+        WHERE p.tipoProcedimento = 'CONSULTA'
+            AND (:cpf IS NULL OR pa.cpf LIKE CONCAT('%', CAST(:cpf AS string), '%'))
+            AND (:status IS NULL OR pp.status = :status)
+            AND (:procedimentoId IS NULL OR p.id = :procedimentoId)
+            AND pp.dataSolicitacao BETWEEN :dataInicio AND :dataFim
+        ORDER BY pp.dataSolicitacao DESC
+    """)
+    Page<ProcedimentoPacienteSimpleResponseDTO> findConsultasByFiltro(
+            @Param("cpf") String cpf,
+            @Param("dataInicio") LocalDate dataInicio,
+            @Param("dataFim") LocalDate dataFim,
+            @Param("status") StatusProcedimento status,
+            @Param("procedimentoId") UUID procedimentoId,
+            Pageable pageable
+    );
+
+    @Query("""
+        SELECT new mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPacienteSimpleResponseDTO(
             pp.id,
             pp.status,
             pp.retorno,
@@ -605,19 +600,12 @@ public interface ProcedimentoPacienteRepository extends JpaRepository<Procedimen
         JOIN pp.procedimento p
         JOIN pp.paciente pa
         WHERE p.tipoProcedimento = 'CONSULTA'
-            AND (:cpf IS NULL OR pa.cpf LIKE CONCAT('%', CAST(:cpf AS string), '%'))
-            AND (:status IS NULL OR pp.status = :status)
-            AND (:procedimentoId IS NULL OR p.id = :procedimentoId)
-            AND (:dataInicio IS NULL OR pp.dataSolicitacao >= :dataInicio)
-            AND (:dataFim IS NULL OR pp.dataSolicitacao <= :dataFim)
+            AND pp.dataSolicitacao BETWEEN :dataInicio AND :dataFim
         ORDER BY pp.dataSolicitacao DESC
     """)
-    Page<ProcedimentoPacienteSimpleResponseDTO> findConsultasByFiltro(
-            @Param("cpf") String cpf,
+    Page<ProcedimentoPacienteSimpleResponseDTO> findConsultasBetweenDates(
             @Param("dataInicio") LocalDate dataInicio,
             @Param("dataFim") LocalDate dataFim,
-            @Param("status") StatusProcedimento status,
-            @Param("procedimentoId") UUID procedimentoId,
             Pageable pageable
     );
 
