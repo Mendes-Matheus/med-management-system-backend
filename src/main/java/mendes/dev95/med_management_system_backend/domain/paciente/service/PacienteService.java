@@ -3,12 +3,14 @@ package mendes.dev95.med_management_system_backend.domain.paciente.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mendes.dev95.med_management_system_backend.domain.paciente.dto.*;
-import mendes.dev95.med_management_system_backend.domain.paciente.entity.Paciente;
 import mendes.dev95.med_management_system_backend.domain.paciente.exception.PacienteAlreadyExistsException;
 import mendes.dev95.med_management_system_backend.domain.paciente.exception.PacienteNotFoundException;
 import mendes.dev95.med_management_system_backend.domain.paciente.mapper.PacienteMapper;
 import mendes.dev95.med_management_system_backend.domain.paciente.repository.PacienteRepository;
 import mendes.dev95.med_management_system_backend.domain.usuario.exception.UsuarioFetchException;
+import mendes.dev95.med_management_system_backend.infra.external.cpf.CpfApiClient;
+import mendes.dev95.med_management_system_backend.infra.external.cpf.CpfApiException;
+import mendes.dev95.med_management_system_backend.infra.external.cpf.CpfApiResponse;
 import mendes.dev95.med_management_system_backend.infra.util.MaskUtil;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -28,6 +30,7 @@ public class PacienteService {
     private final PacienteRepository repository;
     private final MessageSource messageSource;
     private final PacienteMapper mapper;
+    private final CpfApiClient cpfApiClient;
 
     @Transactional
     public PacienteFullResponseDTO save(PacienteRequestDTO dto) {
@@ -122,6 +125,34 @@ public class PacienteService {
         repository.deleteById(id);
         log.info("Paciente removido com sucesso: {}", id);
     }
+
+//    public CpfApiResponse consultarCpf(String cpf) {
+//        log.debug("Iniciando consulta de CPF: {}", MaskUtil.maskCpf(cpf));
+//
+//        // Validação básica do CPF
+//        if (cpf == null || cpf.trim().isEmpty() || cpf.length() != 11) {
+//            throw new IllegalArgumentException("CPF inválido");
+//        }
+//
+//        try {
+//            CpfApiResponse response = cpfApiClient.consultarCpf(cpf);
+//
+//            if (response.code() != 200 || response.data() == null) {
+//                log.warn("API de CPF retornou código não sucedido para {}: {}",
+//                        MaskUtil.maskCpf(cpf), response.code());
+//                throw new CpfApiException("CPF não encontrado ou inválido");
+//            }
+//
+//            log.debug("Consulta de CPF realizada com sucesso para: {}", MaskUtil.maskCpf(cpf));
+//            return response;
+//
+//        } catch (CpfApiException e) {
+//            throw e;
+//        } catch (Exception e) {
+//            log.error("Erro inesperado ao consultar CPF {}: {}", MaskUtil.maskCpf(cpf), e.getMessage());
+//            throw new CpfApiException("Erro ao consultar CPF: " + e.getMessage());
+//        }
+//    }
 
     private String getMessage(String code, Object... args) {
         Locale locale = LocaleContextHolder.getLocale();

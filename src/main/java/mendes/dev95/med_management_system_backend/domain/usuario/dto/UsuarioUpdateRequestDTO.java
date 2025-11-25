@@ -5,46 +5,62 @@ import mendes.dev95.med_management_system_backend.domain.usuario.entity.RolesUsu
 
 public record UsuarioUpdateRequestDTO(
 
-        //@Schema(description = "Nome completo do usuário", example = "Matheus Mendes")
         @NotBlank(message = "O nome é obrigatório")
+        @Pattern(
+                regexp = "^[A-Za-zÀ-ÖØ-öø-ÿ\\s]+$",
+                message = "O campo contém caracteres inválidos. Apenas letras são permitidas."
+        )
         String nome,
 
-        //@Schema(description = "CPF do usuário", example = "12345678900")
         @NotBlank(message = "O CPF é obrigatório")
         @Pattern(regexp = "\\d{11}", message = "O CPF deve conter 11 dígitos numéricos")
         String cpf,
 
-        //@Schema(description = "Logradouro", example = "Rua das Flores")
         @NotBlank(message = "O logradouro é obrigatório")
+        @Pattern(
+                regexp = "^[a-zA-Z0-9À-ÿ\\s]+$",
+                message = "O campo contém caracteres inválidos."
+        )
         String logradouro,
 
-        //@Schema(description = "Número da residência", example = "123")
         @NotBlank(message = "O número é obrigatório")
         String numero,
 
-        //@Schema(description = "Complemento", example = "Apto 201")
+        @Pattern(
+                regexp = "^[a-zA-Z0-9À-ÿ\\s]+$",
+                message = "O campo contém caracteres inválidos."
+        )
+
         String complemento,
 
-        //@Schema(description = "Cidade", example = "São Paulo")
         @NotBlank(message = "A cidade é obrigatória")
+        @Pattern(
+                regexp = "^[a-zA-Z0-9À-ÿ\\s]+$",
+                message = "O campo contém caracteres inválidos."
+        )
+
         String cidade,
 
-        //@Schema(description = "Telefone do usuário")
         @NotBlank(message = "O telefone é obrigatório")
         @Pattern(regexp = "\\d{10,11}", message = "O telefone deve conter 10 ou 11 dígitos numéricos")
         String telefone,
 
-        //@Schema(description = "E-mail do usuário")
         @NotBlank(message = "O e-mail é obrigatório")
         @Email(message = "E-mail inválido")
+        @Pattern(
+                regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$",
+                message = "O e-mail deve ser válido"
+        )
         String email,
 
-        //@Schema(description = "Username para login")
         @NotBlank(message = "O username é obrigatório")
         @Size(min = 4, message = "O username deve ter pelo menos 4 caracteres")
+        @Pattern(
+                regexp = "^[a-zA-Z0-9À-ÿ\\s]+$",
+                message = "O campo contém caracteres inválidos."
+        )
         String username,
 
-        //@Schema(description = "Role do usuário")
         @NotNull(message = "O papel (role) é obrigatório")
         RolesUsuario role
 ) {}

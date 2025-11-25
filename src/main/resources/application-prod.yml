@@ -59,7 +59,12 @@ api:
   security:
     require-https: true
     token:
-      secret: ${TOKEN_SECRET}
+      secret: ${TOKEN_SECRET} # chave gerada com o comando: "openssl rand -hex 32"
       issuer: ${TOKEN_ISSUER}
+
+cpf:
+  api:
+    url: ${CPF_API_URL}
+    key: ${CPF_API_KEY}
 
 debug: true

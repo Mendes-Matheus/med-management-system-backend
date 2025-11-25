@@ -7,6 +7,11 @@ public record UsuarioRegisterRequestDTO(
 
         //@Schema(description = "Nome completo do usuário", example = "Matheus Mendes")
         @NotBlank(message = "O nome é obrigatório")
+        @Pattern(
+            regexp = "^[A-Za-zÀ-ÖØ-öø-ÿ\\s]+$",
+            message = "O campo contém caracteres inválidos. Apenas letras são permitidas."
+        )
+
         String nome,
 
         //@Schema(description = "CPF do usuário", example = "12345678900")
@@ -16,6 +21,10 @@ public record UsuarioRegisterRequestDTO(
 
         //@Schema(description = "Logradouro", example = "Rua das Flores")
         @NotBlank(message = "O logradouro é obrigatório")
+        @Pattern(
+            regexp = "^[a-zA-Z0-9À-ÿ\\s]+$",
+            message = "O campo contém caracteres inválidos."
+        )
         String logradouro,
 
         //@Schema(description = "Número da residência", example = "123")
@@ -23,10 +32,20 @@ public record UsuarioRegisterRequestDTO(
         String numero,
 
         //@Schema(description = "Complemento", example = "Apto 201")
+        @Pattern(
+            regexp = "^[a-zA-Z0-9À-ÿ\\s]+$",
+            message = "O campo contém caracteres inválidos."
+        )
+
         String complemento,
 
         //@Schema(description = "Cidade", example = "São Paulo")
         @NotBlank(message = "A cidade é obrigatória")
+        @Pattern(
+                regexp = "^[a-zA-Z0-9À-ÿ\\s]+$",
+                message = "O campo contém caracteres inválidos."
+        )
+
         String cidade,
 
         //@Schema(description = "Telefone do usuário")
@@ -42,6 +61,10 @@ public record UsuarioRegisterRequestDTO(
         //@Schema(description = "Username para login")
         @NotBlank(message = "O username é obrigatório")
         @Size(min = 4, message = "O username deve ter pelo menos 4 caracteres")
+        @Pattern(
+            regexp = "^[a-zA-Z0-9À-ÿ\\s]+$",
+            message = "O campo contém caracteres inválidos."
+        )
         String username,
 
         //@Schema(description = "Senha de acesso")

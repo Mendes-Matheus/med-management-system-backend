@@ -560,7 +560,7 @@ public interface ProcedimentoPacienteRepository extends JpaRepository<Procedimen
         JOIN pp.paciente pa
         WHERE p.tipoProcedimento = 'CONSULTA'
             AND (:cpf IS NULL OR pa.cpf LIKE CONCAT('%', CAST(:cpf AS string), '%'))
-            AND (:nome IS NULL OR pa.nome LIKE CONCAT('%', CAST(:nome AS string), '%'))
+            AND (:nome IS NULL OR LOWER(pa.nome) LIKE CONCAT('%', CAST(:nome AS string), '%'))
             AND (:status IS NULL OR pp.status = :status)
             AND (:procedimentoId IS NULL OR p.id = :procedimentoId)
             AND pp.dataSolicitacao BETWEEN :dataInicio AND :dataFim
@@ -591,7 +591,7 @@ public interface ProcedimentoPacienteRepository extends JpaRepository<Procedimen
         JOIN pp.paciente pa
         WHERE p.tipoProcedimento = 'EXAME'
             AND (:cpf IS NULL OR pa.cpf LIKE CONCAT('%', CAST(:cpf AS string), '%'))
-            AND (:nome IS NULL OR pa.nome LIKE CONCAT('%', CAST(:nome AS string), '%'))
+            AND (:nome IS NULL OR LOWER(pa.nome) LIKE CONCAT('%', CAST(:nome AS string), '%'))
             AND (:status IS NULL OR pp.status = :status)
             AND (:procedimentoId IS NULL OR p.id = :procedimentoId)
             AND pp.dataSolicitacao BETWEEN :dataInicio AND :dataFim
@@ -622,7 +622,7 @@ public interface ProcedimentoPacienteRepository extends JpaRepository<Procedimen
         JOIN pp.paciente pa
         WHERE p.tipoProcedimento = 'CIRURGIA'
             AND (:cpf IS NULL OR pa.cpf LIKE CONCAT('%', CAST(:cpf AS string), '%'))
-            AND (:nome IS NULL OR pa.nome LIKE CONCAT('%', CAST(:nome AS string), '%'))
+            AND (:nome IS NULL OR LOWER(pa.nome) LIKE CONCAT('%', CAST(:nome AS string), '%'))
             AND (:status IS NULL OR pp.status = :status)
             AND (:procedimentoId IS NULL OR p.id = :procedimentoId)
             AND pp.dataSolicitacao BETWEEN :dataInicio AND :dataFim
