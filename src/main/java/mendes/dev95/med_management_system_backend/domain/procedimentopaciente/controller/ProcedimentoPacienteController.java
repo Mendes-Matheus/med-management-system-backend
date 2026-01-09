@@ -259,7 +259,10 @@ public class ProcedimentoPacienteController {
         return ResponseEntity.ok(service.findCirurgiasByFiltro(filtroRequest, pageable));
     }
 
-
+    @GetMapping("/procedimentos/pendentes/contagem")
+    public ResponseEntity<List<ProcedimentoPendenteDTO>> getContagemProcedimentosPendentes() {
+        return ResponseEntity.ok(service.getContagemProcedimentosPendentes());
+    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {

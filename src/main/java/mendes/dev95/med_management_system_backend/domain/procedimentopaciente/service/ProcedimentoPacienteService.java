@@ -477,12 +477,6 @@ public class ProcedimentoPacienteService {
         }
     }
 
-
-
-
-
-
-
     private boolean hasActiveFilters(ConsultaFiltroRequestDTO filtroRequest) {
         return filtroRequest.cpf() != null && !filtroRequest.cpf().isEmpty() ||
                 filtroRequest.dataInicio() != null ||
@@ -491,6 +485,17 @@ public class ProcedimentoPacienteService {
                 filtroRequest.procedimentoId() != null;
     }
 
+    public List<ProcedimentoPendenteDTO> getContagemProcedimentosPendentes() {
+        try {
+            log.debug("Buscando contagem de cirurgias pendentes agrupadas por procedimento");
+            var resultado = repository.findContagemProcedimentosPendentes();
+            log.debug("Encontradas {} cirurgias pendentes agrupadas por procedimento", resultado.size());
+            return resultado;
+        } catch (Exception ex) {
+            log.error("Erro ao buscar contagem de cirurgias pendentes", ex);
+            throw new UsuarioFetchException(getMessage("procedimentopaciente.contagem.cirurgias.pendentes.error"), ex);
+        }
+    }
 
     private String getMessage(String code, Object... args) {
         Locale locale = LocaleContextHolder.getLocale();

@@ -1,8 +1,8 @@
 package mendes.dev95.med_management_system_backend.domain.procedimentopaciente.repository;
 
 import io.lettuce.core.dynamic.annotation.Param;
-import jakarta.validation.constraints.Pattern;
 import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPacienteSimpleResponseDTO;
+import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPendenteDTO;
 import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.entity.ProcedimentoPaciente;
 import mendes.dev95.med_management_system_backend.domain.procedimentopaciente.entity.StatusProcedimento;
 import org.springframework.data.domain.Page;
@@ -742,5 +742,18 @@ public interface ProcedimentoPacienteRepository extends JpaRepository<Procedimen
             @Param("dataFim") LocalDate dataFim,
             Pageable pageable
     );
+
+    @Query("""
+        SELECT new mendes.dev95.med_management_system_backend.domain.procedimentopaciente.dto.ProcedimentoPendenteDTO(
+            p.nomeProcedimento,
+            COUNT(pp)
+        )
+        FROM ProcedimentoPaciente pp
+        JOIN pp.procedimento p
+        WHERE pp.status = 'PENDENTE'
+        GROUP BY p.nomeProcedimento
+        ORDER BY COUNT(pp) DESC
+    """)
+    List<ProcedimentoPendenteDTO> findContagemProcedimentosPendentes();
 
 }
