@@ -2,9 +2,13 @@ package mendes.dev95.med_management_system_backend.domain.usuario.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import mendes.dev95.med_management_system_backend.domain.usuario.dto.UsuarioRegisterRequestDTO;
 import mendes.dev95.med_management_system_backend.domain.usuario.dto.UsuarioResponseDTO;
 import mendes.dev95.med_management_system_backend.domain.usuario.dto.UsuarioUpdateRequestDTO;
+import mendes.dev95.med_management_system_backend.domain.usuario.dto.UsuarioUpdateResponseDTO;
 import mendes.dev95.med_management_system_backend.domain.usuario.service.UsuarioService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,8 +23,8 @@ public class UsuarioController {
     private final UsuarioService usuarioService;
 
     @GetMapping
-    public ResponseEntity<List<UsuarioResponseDTO>> findAll() {
-        List<UsuarioResponseDTO> usuarios = usuarioService.findAllUsuarios();
+    public ResponseEntity<Page<UsuarioResponseDTO>> findAll(Pageable pageable) {
+        Page<UsuarioResponseDTO> usuarios = usuarioService.findAllUsuarios(pageable);
         return ResponseEntity.ok(usuarios);
     }
 
@@ -31,15 +35,24 @@ public class UsuarioController {
     }
 
     @GetMapping("/id/{id}")
-    public ResponseEntity<UsuarioResponseDTO> findByEmail(@PathVariable UUID id) {
+    public ResponseEntity<UsuarioResponseDTO> findById(@PathVariable UUID id) {
         UsuarioResponseDTO usuario = usuarioService.findUsuarioById(id);
         return ResponseEntity.ok(usuario);
     }
 
-
-    @PutMapping
-    public ResponseEntity<UsuarioResponseDTO> update(@Valid @RequestBody UsuarioUpdateRequestDTO request) {
-        UsuarioResponseDTO response = usuarioService.update(request);
+    @PutMapping("/{id}")
+    public ResponseEntity<UsuarioUpdateResponseDTO> update(
+            @PathVariable UUID id,
+            @Valid @RequestBody UsuarioUpdateRequestDTO request
+    ) {
+        UsuarioUpdateResponseDTO response = usuarioService.update(id, request);
         return ResponseEntity.ok(response);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
+        usuarioService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
 }

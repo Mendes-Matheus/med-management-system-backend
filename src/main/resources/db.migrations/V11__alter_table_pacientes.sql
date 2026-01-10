@@ -1,0 +1,3 @@
+ALTER TABLE pacientes
+    ALTER COLUMN nome_pai DROP NOT NULL,
+    ALTER COLUMN nome_mae SET NOT NULL;

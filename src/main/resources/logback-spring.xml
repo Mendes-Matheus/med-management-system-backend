@@ -1,0 +1,51 @@
+<configuration>
+
+    <!-- Importa as extensões do Spring Boot para suporte ao %clr -->
+    <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter" />
+    <conversionRule conversionWord="wex" converterClass="org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter" />
+    <conversionRule conversionWord="wEx" converterClass="org.springframework.boot.logging.logback.ExtendedWhitespaceThrowableProxyConverter" />
+
+    <!-- Appender padrão (todos os logs) -->
+    <appender name="APP_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/app.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/app-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{dd-MM-yyyy HH:mm:ss.SSS} %-5level [%thread] %logger{36} : %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Appender só para logs do pacote mendes.dev95 -->
+    <appender name="MENDES_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/mendes.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/mendes-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{dd-MM-yyyy HH:mm:ss.SSS} %-5level [%thread] %logger{36} : %msg | Usuario=%X{usuario} | IP=%X{ip} | requestId=%X{requestId} %n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Console -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%clr(%d{dd-MM-yyyy HH:mm:ss.SSS}){faint} %clr(%5p) %clr([%thread]){magenta} %clr(%logger{36}){cyan} : %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Logger específico para mendes.dev95 -->
+    <logger name="mendes.dev95" level="TRACE" additivity="false">
+        <appender-ref ref="MENDES_FILE"/>
+        <appender-ref ref="CONSOLE"/>
+    </logger>
+
+    <!-- Root logger (restante da aplicação) -->
+    <root level="WARN">
+        <appender-ref ref="APP_FILE"/>
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+</configuration>

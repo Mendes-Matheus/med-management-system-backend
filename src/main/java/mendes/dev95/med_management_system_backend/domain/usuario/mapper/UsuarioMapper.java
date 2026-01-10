@@ -3,10 +3,12 @@ package mendes.dev95.med_management_system_backend.domain.usuario.mapper;
 import mendes.dev95.med_management_system_backend.domain.usuario.dto.UsuarioRegisterRequestDTO;
 import mendes.dev95.med_management_system_backend.domain.usuario.dto.UsuarioResponseDTO;
 import mendes.dev95.med_management_system_backend.domain.usuario.dto.UsuarioUpdateRequestDTO;
+import mendes.dev95.med_management_system_backend.domain.usuario.dto.UsuarioUpdateResponseDTO;
 import mendes.dev95.med_management_system_backend.domain.usuario.entity.Usuario;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,6 +22,8 @@ public interface UsuarioMapper {
     // converte entidade em resposta
     UsuarioResponseDTO toResponse(Usuario entity);
 
+    UsuarioUpdateResponseDTO toUpdateResponse(Usuario entity);
+
     UsuarioResponseDTO toOptionalResponse(Optional<Usuario> entity);
 
     Usuario toEntityFromUpdate(UsuarioUpdateRequestDTO dto);
@@ -27,10 +31,8 @@ public interface UsuarioMapper {
     // converte lista de entidades em lista de respostas
     List<UsuarioResponseDTO> toResponseList(List<Usuario> entities);
 
-    // atualiza entidade existente a partir de um DTO (ignora id e version)
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "version", ignore = true)
-    @Mapping(target = "password", ignore = true)
+//    Page<UsuarioResponseDTO> toResponsePageableList(Page<Usuario> entities);
+
     void updateEntityFromDto(UsuarioUpdateRequestDTO dto, @MappingTarget Usuario entity);
 
 }

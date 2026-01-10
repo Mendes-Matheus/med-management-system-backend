@@ -1,7 +1,14 @@
 server:
-  port: ${SERVER_PORT}
+  port: ${SERVER_PORT:8000}
+  forward-headers-strategy: native
+  tomcat:
+    use-relative-redirects: true
 
 spring:
+  output:
+    ansi:
+      enabled: always
+
   datasource:
     url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
     username: ${DB_USER}
@@ -28,19 +35,28 @@ spring:
       allowed-methods: "GET,POST,PUT,DELETE,OPTIONS"
       allowed-headers: "*"
       allow-credentials: true
-
   messages:
     basename: messages
     encoding: UTF-8
 
 logging:
   level:
-    com.example: DEBUG
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    root: info
+    mendes:
+      dev95: trace
+    org:
+      springframework:
+        web: debug
+      hibernate:
+        SQL: debug
+        type:
+          descriptor:
+            sql:
+              BasicBinder: trace
 
 api:
   security:
+    require-https: true
     token:
       secret: ${TOKEN.SECRET} # chave gerada com o comando: "openssl rand -hex 32"
       issuer: ${TOKEN_ISSUER}

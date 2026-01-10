@@ -4,7 +4,6 @@ import java.util.UUID;
 
 public record EstabelecimentoResponseDTO(
     UUID id,
-    Long version,
     String nomeEstabelecimento,
     String observacoes
 ) {

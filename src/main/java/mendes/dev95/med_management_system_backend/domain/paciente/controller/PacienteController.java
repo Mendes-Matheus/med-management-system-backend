@@ -2,16 +2,20 @@ package mendes.dev95.med_management_system_backend.domain.paciente.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import mendes.dev95.med_management_system_backend.domain.paciente.dto.PacienteRequestDTO;
-import mendes.dev95.med_management_system_backend.domain.paciente.dto.PacienteResponseDTO;
-import mendes.dev95.med_management_system_backend.domain.paciente.dto.PacienteResponseWithProcedimentosDTO;
+import mendes.dev95.med_management_system_backend.domain.paciente.dto.*;
 import mendes.dev95.med_management_system_backend.domain.paciente.service.PacienteService;
+import mendes.dev95.med_management_system_backend.infra.external.cpf.ConsultaCpfApiResponse;
+import mendes.dev95.med_management_system_backend.infra.external.cpf.CpfApiResponse;
+import mendes.dev95.med_management_system_backend.infra.external.cpf.CpfApiService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+
 import java.net.URI;
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -21,9 +25,11 @@ import java.util.UUID;
 public class PacienteController {
 
     private final PacienteService service;
+    private final CpfApiService cpfApiService;
+
 
     @PostMapping
-    public ResponseEntity<PacienteResponseDTO> save(@RequestBody @Valid PacienteRequestDTO requestDTO) {
+    public ResponseEntity<PacienteFullResponseDTO> save(@RequestBody @Valid PacienteRequestDTO requestDTO) {
         var response = service.save(requestDTO);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -34,15 +40,40 @@ public class PacienteController {
         return ResponseEntity.created(location).body(response);
     }
 
+    @GetMapping("/cpf/api/{cpf}")
+    public ResponseEntity<ConsultaCpfApiResponse> consultarApiCpf(@PathVariable String cpf) {
+        return ResponseEntity.ok(cpfApiService.consultar(cpf));
+    }
+
+//    @GetMapping("/consultar-cpf/{cpf}")
+//    public ResponseEntity<CpfApiResponse> consultarCpf(@PathVariable String cpf) {
+//
+//        try {
+//            CpfApiResponse response = service.consultarCpf(cpf);
+//            return ResponseEntity.ok(response);
+//        } catch (Exception e) {
+//            return ResponseEntity.badRequest().build();
+//        }
+//    }
+
+
     @GetMapping
-    public ResponseEntity<List<PacienteResponseDTO>> findAll() {
-        return ResponseEntity.ok(service.findAll());
+    public ResponseEntity<Page<PacienteResponseDTO>> findAll(@PageableDefault(size = 10) Pageable pageable) {
+        return ResponseEntity.ok(service.findAll(pageable));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<PacienteResponseDTO> findById(@PathVariable UUID id) {
         return ResponseEntity.ok(service.findById(id));
     }
+
+    @GetMapping("/nome/{nome}")
+    public ResponseEntity<Page<PacienteResponseDTO>> findByNome(
+            @PathVariable String nome,
+            @PageableDefault(size = 10, sort = "nome") Pageable pageable) {
+        return ResponseEntity.ok(service.findByNome(nome, pageable));
+    }
+
 
     @GetMapping("procedimentos/{id}")
     public ResponseEntity<PacienteResponseWithProcedimentosDTO> findProcedimentosPaciente(@PathVariable UUID id) {
@@ -54,15 +85,15 @@ public class PacienteController {
         return ResponseEntity.ok(service.findByCpf(cpf));
     }
 
-    @GetMapping("/nome/{nome}")
-    public ResponseEntity<PacienteResponseDTO> findByNome(@PathVariable String nome) {
-        return ResponseEntity.ok(service.findByNome(nome));
+    @GetMapping("/cns/{cns}")
+    public ResponseEntity<PacienteResponseDTO> findByCns(@PathVariable String cns) {
+        return ResponseEntity.ok(service.findByCns(cns));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<PacienteResponseDTO> update(
             @PathVariable UUID id,
-            @RequestBody @Valid PacienteRequestDTO request
+            @RequestBody @Valid PacienteUpdateRequestDTO request
     ) {
         return ResponseEntity.ok(service.update(id, request));
     }

@@ -1,6 +1,5 @@
 package mendes.dev95.med_management_system_backend.domain.procedimento.mapper;
 
-import mendes.dev95.med_management_system_backend.domain.estabelecimento.entity.Estabelecimento;
 import mendes.dev95.med_management_system_backend.domain.estabelecimento.mapper.EstabelecimentoMapper;
 import mendes.dev95.med_management_system_backend.domain.procedimento.dto.ProcedimentoRequestDTO;
 import mendes.dev95.med_management_system_backend.domain.procedimento.dto.ProcedimentoResponseDTO;
@@ -14,26 +13,28 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses = {EstabelecimentoMapper.class})
 public interface ProcedimentoMapper {
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "version", ignore = true)
+    @Mapping(target = "estabelecimentos", ignore = true)
+    @Mapping(target = "procedimentoPaciente", ignore = true)
     default Procedimento toEntity(ProcedimentoRequestDTO dto) {
-        var estabelecimento = new Estabelecimento();
-        estabelecimento.setId(dto.estabelecimentoId());
 
         return Procedimento.builder()
                 .nomeProcedimento(dto.nomeProcedimento())
                 .observacoes(dto.observacoes())
                 .orientacoes(dto.orientacoes())
-                .estabelecimento(estabelecimento)
                 .tipoProcedimento(dto.tipoProcedimento())
                 .build();
     }
 
+    @Mapping(target = "estabelecimentos", source = "estabelecimentos")
     ProcedimentoResponseDTO toResponse(Procedimento entity);
 
     List<ProcedimentoResponseDTO> toResponseList(List<Procedimento> entities);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "version", ignore = true)
-    @Mapping(target = "estabelecimento", ignore = true)
+    @Mapping(target = "estabelecimentos", ignore = true)
     void updateEntityFromDto(ProcedimentoRequestDTO dto, @MappingTarget Procedimento entity);
 
 }

@@ -1,0 +1,45 @@
+# Exported from Render on 2025-11-12T12:49:31Z
+version: "1"
+projects:
+  - name: srm-canarana-ba
+    environments:
+      - name: Production
+        services:
+          - type: web
+            name: srm-canarana-ba
+            runtime: docker
+            repo: https://github.com/Mendes-Matheus/srm-backend
+            plan: free
+            envVars:
+              - key: REDIS_HOST
+                sync: false
+              - key: LOG_FILE_NAME
+                sync: false
+              - key: DB_USER
+                sync: false
+              - key: DB_URL
+                sync: false
+              - key: DB_PORT
+                sync: false
+              - key: DB_PASSWORD
+                sync: false
+              - key: DB_NAME
+                sync: false
+              - key: DB_HOST
+                sync: false
+              - key: REDIS_PASSWORD
+                sync: false
+              - key: REDIS_PORT
+                sync: false
+              - key: TOKEN_ISSUER
+                sync: false
+              - key: TOKEN_SECRET
+                sync: false
+              - key: WEB_CORS_ORIGINS
+                sync: false
+              - key: SERVER_PORT
+                sync: false
+            region: oregon
+            dockerContext: .
+            dockerfilePath: ./Dockerfile
+            autoDeployTrigger: commit

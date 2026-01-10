@@ -39,14 +39,20 @@ public class Procedimento implements Serializable {
     @Enumerated(EnumType.STRING)
     private TipoProcedimento tipoProcedimento;
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "estabelecimento_id", nullable = false)
-    private Estabelecimento estabelecimento;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "procedimento_estabelecimento",
+            joinColumns = @JoinColumn(name = "procedimento_id"),
+            inverseJoinColumns = @JoinColumn(name = "estabelecimento_id")
+    )
+    @Builder.Default
+    private List<Estabelecimento> estabelecimentos = new ArrayList<>();
 
     @OneToMany(mappedBy = "procedimento", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
+    @Builder.Default
     private List<ProcedimentoPaciente> procedimentoPaciente = new ArrayList<>();
 
     @Column(length = 1000)

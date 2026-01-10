@@ -35,10 +35,15 @@ public class ProcedimentoPaciente implements Serializable {
     @Column(length = 20)
     private StatusProcedimento status;
 
+    @Column(name = "retorno")
+    private Boolean retorno;
+
     @Column(name = "data_solicitacao")
+    @Temporal(TemporalType.DATE)
     private LocalDate dataSolicitacao;
 
     @Column(name = "data_agendamento")
+    @Temporal(TemporalType.DATE)
     private LocalDate dataAgendamento;
 
     @Column(length = 1000)

@@ -13,9 +13,6 @@ public record ProcedimentoRequestDTO (
         @NotBlank(message = "{procedimento.nomeProcedimento.notblank}")
         String nomeProcedimento,
 
-        @NotNull(message = "{procedimento.dataExame.notnull}")
-        UUID estabelecimentoId,
-
         @Size(max = 1000, message = "{procedimento.orientacoes.size}")
         String orientacoes,
 

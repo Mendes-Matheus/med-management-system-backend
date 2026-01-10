@@ -51,10 +51,10 @@ public class Paciente implements Serializable {
     @Column(length = 20, unique = true, nullable = false)
     private String cns;
 
-    @Column(length = 200,  nullable = false)
+    @Column(length = 200)
     private String nomePai;
 
-    @Column(length = 200)
+    @Column(length = 200,  nullable = false)
     private String nomeMae;
 
     @Column(length = 20,  nullable = false)

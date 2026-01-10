@@ -1,19 +1,26 @@
-FROM ubuntu:24.04 AS build
-LABEL authors="matheus"
+# Etapa 1: Build
+FROM maven:3.9-eclipse-temurin-21 AS build
 
-RUN apt-get update
-RUN apt-get install openjdk-21-jdk -y
-COPY . .
+WORKDIR /app
+COPY pom.xml ./
 
-RUN apt-get install maven -y
-RUN mvn clean install
+# Baixa dependências antes de copiar o código → aproveita cache
+RUN mvn dependency:go-offline -B
 
-FROM openjdk:21-jdk-slim
+COPY src ./src
+RUN mvn clean package -DskipTests
 
-#ENV SPRING_PROFILES_ACTIVE=dev
+# Etapa 2: Runtime
+FROM eclipse-temurin:21-jre-alpine
 
+WORKDIR /app
 EXPOSE 8080
 
-COPY --from=build /target/*.jar app.jar
+# Copia apenas o jar compilado
+COPY --from=build /app/target/*.jar app.jar
 
-ENTRYPOINT [ "java", "-jar", "app.jar" ]
+# Usa variável de ambiente padrão do Render
+ENV PORT=8080
+ENV SPRING_PROFILES_ACTIVE=prod
+
+ENTRYPOINT ["java", "-jar", "app.jar"]

@@ -10,6 +10,7 @@ import mendes.dev95.med_management_system_backend.domain.paciente.exception.Paci
 import mendes.dev95.med_management_system_backend.domain.paciente.exception.PacienteNotFoundException;
 import mendes.dev95.med_management_system_backend.domain.procedimento.exception.ProcedimentoAgendadoException;
 import mendes.dev95.med_management_system_backend.domain.procedimento.exception.ProcedimentoNotFoundException;
+import mendes.dev95.med_management_system_backend.domain.usuario.exception.UsuarioAlreadyExistsException;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -233,7 +234,7 @@ public class GlobalExceptionHandler {
             EstabelecimentoNotFoundException ex, HttpServletRequest request) {
 
         String correlationId = generateCorrelationId();
-        log.warn("\n\n{}\nCorrelation ID: {}\n", ex.getMessage(), correlationId);
+        log.warn("{} - Correlation ID: {}", ex.getMessage(), correlationId);
 
         String message = getLocalizedMessage("estabelecimento.notfound", "Estabelecimento não encontrado");
 
@@ -253,9 +254,9 @@ public class GlobalExceptionHandler {
             PacienteAlreadyExistsException ex, HttpServletRequest request
     ){
         String correlationId = generateCorrelationId();
-        log.warn("\n\n{}\nCorrelation ID: {}\n", ex.getMessage(), correlationId);
+        log.warn("{} - Correlation ID: {}", ex.getMessage(), correlationId);
 
-        String message = getLocalizedMessage("paciente.alreadyexists", "Paciente já cadastrado");
+        String message = getLocalizedMessage(ex.getMessage(), "Paciente já cadastrado");
 
         ErrorResponse response = buildErrorResponse(
                 HttpStatus.CONFLICT,
@@ -289,12 +290,34 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
 
+    @ExceptionHandler(UsuarioAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> UsuarioAlreadyExists(
+            UsuarioAlreadyExistsException ex,
+            HttpServletRequest request
+    ) {
+        String correlationId = generateCorrelationId();
+        log.warn("{} - Correlation ID: {}", ex.getMessage(), correlationId);
+
+        String localizedMessage = getLocalizedMessage(ex.getMessage(), "Usuário já cadastrado");
+
+        ErrorResponse response = buildErrorResponse(
+                HttpStatus.CONFLICT,
+                getLocalizedMessage("error.conflict", "Conflict"),
+                List.of(localizedMessage),
+                request,
+                correlationId
+        );
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
+
     @ExceptionHandler(PacienteNotFoundException.class)
     public ResponseEntity<ErrorResponse> handlePacienteNotFound(
             PacienteNotFoundException ex, HttpServletRequest request) {
 
         String correlationId = generateCorrelationId();
-        log.warn("\n\n{}\nCorrelation ID: {}\n", ex.getMessage(), correlationId);
+        log.warn("{} - Correlation ID: {}", ex.getMessage(), correlationId);
 
         String message = getLocalizedMessage("paciente.notfound", "Paciente não encontrado");
 
@@ -335,7 +358,7 @@ public class GlobalExceptionHandler {
             ProcedimentoNotFoundException ex, HttpServletRequest request) {
 
         String correlationId = generateCorrelationId();
-        log.warn("\n\n{}\nCorrelation ID: {}\n", ex.getMessage(), correlationId);
+        log.warn("{} - Correlation ID: {}", ex.getMessage(), correlationId);
 
         String message = getLocalizedMessage("procedimento.notfound", "Procedimento não encontrado");
 
@@ -355,7 +378,7 @@ public class GlobalExceptionHandler {
             ProcedimentoAgendadoException  ex, HttpServletRequest request
     ){
         String correlationId = generateCorrelationId();
-        log.warn("\n\n{}\nCorrelation ID: {}\n", ex.getMessage(), correlationId);
+        log.warn("{} - Correlation ID: {}", ex.getMessage(), correlationId);
 
         String message = getLocalizedMessage("procedimento.agendado", "Paciente já possui agendamento para este procedimento");
 
