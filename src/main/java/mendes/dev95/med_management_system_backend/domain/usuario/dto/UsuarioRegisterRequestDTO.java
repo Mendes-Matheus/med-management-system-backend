@@ -62,8 +62,8 @@ public record UsuarioRegisterRequestDTO(
         @NotBlank(message = "O username é obrigatório")
         @Size(min = 4, message = "O username deve ter pelo menos 4 caracteres")
         @Pattern(
-            regexp = "^[a-zA-Z0-9À-ÿ\\s]+$",
-            message = "O campo contém caracteres inválidos."
+                regexp = "^[a-zA-Z0-9._-]+$",
+                message = "O username pode conter apenas letras, números, ponto (.), underline (_) e hífen (-)."
         )
         String username,
 
