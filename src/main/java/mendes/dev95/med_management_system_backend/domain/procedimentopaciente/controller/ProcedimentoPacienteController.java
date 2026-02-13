@@ -117,7 +117,7 @@ public class ProcedimentoPacienteController {
     @GetMapping("/consultas/status/{status}")
     public ResponseEntity<Page<ProcedimentoPacienteSimpleResponseDTO>> findConsultasByProcedimentoStatus(
             @PathVariable String status,
-               @PageableDefault(size = 10) Pageable pageable) {
+            @PageableDefault(size = 10) Pageable pageable) {
         return ResponseEntity.ok(service.findConsultasByProcedimentoStatus(status, pageable));
     }
 
@@ -259,7 +259,10 @@ public class ProcedimentoPacienteController {
         return ResponseEntity.ok(service.findCirurgiasByFiltro(filtroRequest, pageable));
     }
 
-
+    @GetMapping("/procedimentos/pendentes/contagem")
+    public ResponseEntity<List<ProcedimentoPendenteDTO>> getContagemProcedimentosPendentes() {
+        return ResponseEntity.ok(service.getContagemProcedimentosPendentes());
+    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
