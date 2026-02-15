@@ -3,18 +3,21 @@ server:
   forward-headers-strategy: native
   tomcat:
     use-relative-redirects: true
+  servlet:
+    encoding:
+      enabled: true
+      force: true
+      charset: UTF-8
 
 spring:
   output:
     ansi:
       enabled: always
-
   datasource:
-    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}?charSet=UTF8
     username: ${DB_USER}
     password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
-
   jpa:
     hibernate:
       ddl-auto: update
@@ -23,11 +26,9 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: false
-
   flyway:
     enabled: true
     baseline-on-migrate: true
-
   data:
     redis:
       host: ${REDIS_HOST}
@@ -35,14 +36,12 @@ spring:
       password: ${REDIS_PASSWORD}
       ssl:
         enabled: true
-
   web:
     cors:
       allowed-origins: ${WEB_CORS_ORIGINS}
       allowed-methods: "GET,POST,PUT,DELETE,OPTIONS"
       allowed-headers: "*"
       allow-credentials: true
-
   messages:
     basename: messages
     encoding: UTF-8
@@ -61,7 +60,6 @@ api:
     token:
       secret: ${TOKEN_SECRET} # chave gerada com o comando: "openssl rand -hex 32"
       issuer: ${TOKEN_ISSUER}
-
 cpf:
   api:
     url: ${CPF_API_URL}
